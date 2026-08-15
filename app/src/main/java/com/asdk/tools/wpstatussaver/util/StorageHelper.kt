@@ -224,7 +224,7 @@ object StorageHelper {
             com.asdk.tools.wpstatussaver.model.SaveLocation.DOWNLOADS.displayName
         )
 
-        androidx.appcompat.app.AlertDialog.Builder(context)
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
             .setTitle("Save where?")
             .setItems(options) { _, which ->
                 val selected = when (which) {

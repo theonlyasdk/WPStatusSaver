@@ -5,6 +5,12 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
         <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="appBarBackground">?attr/colorSurface</item>
+        <item name="appBarTitleColor">?attr/colorOnSurface</item>
+        <item name="appBarIconTint">?attr/colorOnSurface</item>
+        <item name="appBarSourceButtonBackground">?attr/colorSurfaceVariant</item>
+        <item name="appBarSourceButtonTextColor">?attr/colorOnSurfaceVariant</item>
+        <item name="selectionBarBackground">?attr/colorSecondaryContainer</item>
         <item name="colorControlNormal">?attr/colorOnSurface</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.Small</item>

@@ -161,7 +161,7 @@ class SavedListFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(status: StatusMedia) {
-        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.delete_confirm_title)
             .setMessage(R.string.delete_confirm_msg)
             .setPositiveButton(R.string.action_delete) { _, _ ->

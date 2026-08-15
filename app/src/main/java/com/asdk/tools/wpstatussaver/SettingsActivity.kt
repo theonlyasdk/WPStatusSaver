@@ -65,7 +65,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // 7. Storage Location Info
         binding.itemStorageLocation.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.pref_storage_loc_title)
                 .setMessage(
                     "All saved images and videos are stored in your device's public media storage:\n\n" +
@@ -98,7 +98,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // 11. How to Use
         binding.itemHelp.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.help_title)
                 .setMessage(R.string.help_content)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -108,7 +108,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // 12. About & License
         binding.itemAbout.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.about_title)
                 .setMessage(
                     "WP Status Saver v1.0\n\n" +
@@ -147,7 +147,7 @@ class SettingsActivity : AppCompatActivity() {
         val current = SettingsManager.getDefaultSaveLocation(this)
         val selectedIdx = locations.indexOf(current).coerceAtLeast(0)
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.pref_default_loc_title)
             .setSingleChoiceItems(names, selectedIdx) { dialog, which ->
                 SettingsManager.setDefaultSaveLocation(this, locations[which])
@@ -171,7 +171,7 @@ class SettingsActivity : AppCompatActivity() {
             else -> 0
         }
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.pref_theme_title)
             .setSingleChoiceItems(themes, currentSelection) { dialog, which ->
                 val newTheme = when (which) {
@@ -195,7 +195,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val currentSelection = if (SettingsManager.getGridColumns(this) == 3) 1 else 0
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.pref_grid_title)
             .setSingleChoiceItems(options, currentSelection) { dialog, which ->
                 SettingsManager.setGridColumns(this, if (which == 1) 3 else 2)
@@ -213,7 +213,7 @@ class SettingsActivity : AppCompatActivity() {
         val currentSource = SettingsManager.getDefaultSource(this)
         val currentIdx = appList.indexOf(currentSource).coerceAtLeast(0)
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.pref_source_title)
             .setSingleChoiceItems(names, currentIdx) { dialog, which ->
                 val chosen = appList[which]
@@ -226,7 +226,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showResetSafConfirmDialog() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.pref_reset_saf_title)
             .setMessage("Are you sure you want to reset granted folder permissions? You will be prompted to grant folder access again.")
             .setPositiveButton("Reset") { _, _ ->

@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Main App Theme -->
+    <!-- Main App Theme (Material 2 for Android < 12) -->
     <style name="Theme.WPStatusSaver" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <item name="colorPrimary">@color/whatsapp_primary</item>
         <item name="colorPrimaryDark">@color/whatsapp_primary_dark</item>
@@ -8,6 +8,12 @@
         <item name="colorAccent">@color/whatsapp_accent</item>
         <item name="android:statusBarColor">@color/whatsapp_primary_dark</item>
         <item name="android:windowBackground">@color/window_background</item>
+        <item name="appBarBackground">@color/whatsapp_primary</item>
+        <item name="appBarTitleColor">@color/white</item>
+        <item name="appBarIconTint">@color/white</item>
+        <item name="appBarSourceButtonBackground">#26FFFFFF</item>
+        <item name="appBarSourceButtonTextColor">@color/white</item>
+        <item name="selectionBarBackground">@color/whatsapp_primary_dark</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/whatsapp_accent</item>
         <item name="switchStyle">@style/Widget.App.SwitchCompat</item>

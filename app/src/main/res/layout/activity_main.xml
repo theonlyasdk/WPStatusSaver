@@ -5,15 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_background">
+    android:background="?attr/android:windowBackground">
 
     <!-- Top AppBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whatsapp_primary"
-        android:elevation="4dp">
+        android:background="?attr/appBarBackground"
+        app:elevation="0dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -23,9 +23,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                android:background="@android:color/transparent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -46,7 +44,7 @@
                         android:paddingStart="4dp"
                         android:paddingEnd="8dp"
                         android:text="@string/app_name"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appBarTitleColor"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -57,12 +55,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:layout_marginEnd="4dp"
-                        android:background="#26FFFFFF"
+                        android:background="?attr/appBarSourceButtonBackground"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:text="@string/source_whatsapp"
                         android:textAllCaps="true"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appBarSourceButtonTextColor"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -79,7 +77,6 @@
                 android:visibility="gone"
                 app:contentInsetLeft="4dp"
                 app:contentInsetStart="4dp"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 tools:visibility="visible">
 
                 <LinearLayout
@@ -96,7 +93,7 @@
                         android:contentDescription="@string/cancel"
                         android:padding="10dp"
                         android:src="@drawable/ic_close"
-                        app:tint="@color/white" />
+                        app:tint="?attr/appBarIconTint" />
 
                     <!-- Clickable Selected Count text (triggers Select All) -->
                     <TextView
@@ -111,7 +108,7 @@
                         android:gravity="center_vertical"
                         android:paddingStart="4dp"
                         android:paddingEnd="4dp"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appBarTitleColor"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         tools:text="1 selected" />
@@ -124,7 +121,7 @@
                         android:contentDescription="@string/action_refresh"
                         android:padding="10dp"
                         android:src="@drawable/ic_check_circle"
-                        app:tint="@color/white" />
+                        app:tint="?attr/appBarIconTint" />
 
                     <ImageButton
                         android:id="@+id/btnBatchSave"
@@ -134,7 +131,7 @@
                         android:contentDescription="@string/action_save"
                         android:padding="10dp"
                         android:src="@drawable/ic_file_download"
-                        app:tint="@color/white" />
+                        app:tint="?attr/appBarIconTint" />
 
                     <ImageButton
                         android:id="@+id/btnBatchShare"
@@ -144,7 +141,7 @@
                         android:contentDescription="@string/action_share"
                         android:padding="10dp"
                         android:src="@drawable/ic_share"
-                        app:tint="@color/white" />
+                        app:tint="?attr/appBarIconTint" />
 
                     <ImageButton
                         android:id="@+id/btnBatchDelete"
@@ -156,7 +153,7 @@
                         android:padding="10dp"
                         android:src="@drawable/ic_delete"
                         android:visibility="gone"
-                        app:tint="@color/white"
+                        app:tint="?attr/appBarIconTint"
                         tools:visibility="visible" />
 
                 </LinearLayout>
@@ -181,16 +178,11 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Bottom Navigation View -->
+        <!-- Bottom Navigation View with Native M3 styling -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/surface_card"
-            android:elevation="8dp"
-            app:elevation="8dp"
-            app:itemIconTint="@color/bottom_nav_item_color"
-            app:itemTextColor="@color/bottom_nav_item_color"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_navigation_menu" />
 

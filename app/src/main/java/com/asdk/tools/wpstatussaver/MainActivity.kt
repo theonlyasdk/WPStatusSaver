@@ -302,21 +302,16 @@ class MainActivity : AppCompatActivity() {
     private fun animateSelectionBarTransition(entering: Boolean) {
         colorAnimator?.cancel()
 
-        val colorPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.whatsapp_primary)
-        val colorPrimaryDark = androidx.core.content.ContextCompat.getColor(this, R.color.whatsapp_primary_dark)
-
-        val colorFrom = if (entering) colorPrimary else colorPrimaryDark
-        val colorTo = if (entering) colorPrimaryDark else colorPrimary
-
-        colorAnimator = android.animation.ValueAnimator.ofArgb(colorFrom, colorTo).apply {
-            duration = 220
-            addUpdateListener { animator ->
-                val color = animator.animatedValue as Int
-                binding.appBarLayout.setBackgroundColor(color)
-                window.statusBarColor = color
-            }
-            start()
+        val typedValue = android.util.TypedValue()
+        val defaultBgAttr = if (entering) R.attr.selectionBarBackground else R.attr.appBarBackground
+        theme.resolveAttribute(defaultBgAttr, typedValue, true)
+        val targetColor = if (typedValue.resourceId != 0) {
+            androidx.core.content.ContextCompat.getColor(this, typedValue.resourceId)
+        } else {
+            typedValue.data
         }
+
+        binding.appBarLayout.setBackgroundColor(targetColor)
 
         if (entering) {
             binding.toolbar.animate().alpha(0f).setDuration(180).withEndAction {
@@ -377,7 +372,7 @@ class MainActivity : AppCompatActivity() {
         dismissLoadingDialog()
         val view = layoutInflater.inflate(R.layout.dialog_loading, null)
         view.findViewById<android.widget.TextView>(R.id.tvLoadingMessage).text = message
-        progressDialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        progressDialog = MaterialAlertDialogBuilder(this)
             .setView(view)
             .setCancelable(false)
             .show()
@@ -429,7 +424,7 @@ class MainActivity : AppCompatActivity() {
         val selected = adapter.getSelectedList()
         if (selected.isEmpty()) return
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.delete_confirm_title)
             .setMessage("Delete ${selected.size} selected items?")
             .setPositiveButton(R.string.action_delete) { _, _ ->
@@ -495,7 +490,7 @@ class MainActivity : AppCompatActivity() {
         spinnerSort.setSelection(currentSort.ordinal)
         spinnerFilter.setSelection(currentFilter.ordinal)
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.action_sort_filter)
             .setView(dialogView)
             .setPositiveButton("Apply") { _, _ ->
@@ -525,7 +520,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showHelpDialog() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.help_title)
             .setMessage(R.string.help_content)
             .setIcon(android.R.drawable.ic_dialog_info)
@@ -534,7 +529,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAboutDialog() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.about_title)
             .setMessage(
                 "WP Status Saver\n\n" +

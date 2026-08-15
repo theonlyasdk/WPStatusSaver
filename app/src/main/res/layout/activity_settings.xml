@@ -4,26 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_background">
+    android:background="?attr/android:windowBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whatsapp_primary"
-        android:elevation="4dp">
+        android:background="?attr/appBarBackground"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/whatsapp_primary"
+            android:background="?attr/appBarBackground"
             app:navigationContentDescription="@string/cancel"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@color/white"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:navigationIconTint="?attr/appBarIconTint"
             app:title="@string/settings_title"
-            app:titleTextColor="@color/white" />
+            app:titleTextColor="?attr/appBarTitleColor" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -47,7 +46,7 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@string/pref_cat_appearance"
-                android:textColor="@color/whatsapp_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -129,7 +128,7 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@string/pref_cat_storage"
-                android:textColor="@color/whatsapp_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -312,7 +311,7 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@string/pref_cat_media"
-                android:textColor="@color/whatsapp_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -414,7 +413,7 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@string/pref_cat_about"
-                android:textColor="@color/whatsapp_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="appBarBackground" format="color|reference" />
+    <attr name="appBarTitleColor" format="color|reference" />
+    <attr name="appBarIconTint" format="color|reference" />
+    <attr name="appBarSourceButtonBackground" format="color|reference" />
+    <attr name="appBarSourceButtonTextColor" format="color|reference" />
+    <attr name="selectionBarBackground" format="color|reference" />
+</resources>
