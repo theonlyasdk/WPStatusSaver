@@ -75,13 +75,20 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun getActiveFragment(): androidx.fragment.app.Fragment? {
+        return supportFragmentManager.findFragmentByTag("f" + binding.viewPager.currentItem)
+    }
+
     private fun setupSharedElementCallback() {
         setExitSharedElementCallback(object : androidx.core.app.SharedElementCallback() {
             override fun onMapSharedElements(names: MutableList<String>?, sharedElements: MutableMap<String, View>?) {
                 if (reenterPosition != -1 && names != null && sharedElements != null) {
-                    val fragment = getActiveFragment()
-                    val recyclerView = (fragment as? StatusListFragment)?.getRecyclerView()
-                        ?: (fragment as? SavedListFragment)?.getRecyclerView()
+                    val currentFrag = getActiveFragment()
+                    val recyclerView = when (currentFrag) {
+                        is StatusListFragment -> currentFrag.getRecyclerView()
+                        is SavedListFragment -> currentFrag.getRecyclerView()
+                        else -> null
+                    }
                     val holder = recyclerView?.findViewHolderForAdapterPosition(reenterPosition) as? StatusAdapter.StatusViewHolder
                     val thumbView = holder?.binding?.ivThumbnail
                     if (thumbView != null) {
@@ -98,9 +105,12 @@ class MainActivity : AppCompatActivity() {
         val returnPos = data?.getIntExtra(MediaViewActivity.EXTRA_CURRENT_POSITION, -1) ?: -1
         if (returnPos != -1) {
             reenterPosition = returnPos
-            val fragment = getActiveFragment()
-            val recyclerView = (fragment as? StatusListFragment)?.getRecyclerView()
-                ?: (fragment as? SavedListFragment)?.getRecyclerView()
+            val currentFrag = getActiveFragment()
+            val recyclerView = when (currentFrag) {
+                is StatusListFragment -> currentFrag.getRecyclerView()
+                is SavedListFragment -> currentFrag.getRecyclerView()
+                else -> null
+            }
             recyclerView?.scrollToPosition(returnPos)
             supportPostponeEnterTransition()
             recyclerView?.viewTreeObserver?.addOnPreDrawListener(object : android.view.ViewTreeObserver.OnPreDrawListener {

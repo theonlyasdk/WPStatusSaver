@@ -1,20 +1,29 @@
 package com.asdk.tools.wpstatussaver
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.asdk.tools.wpstatussaver.adapter.MediaPagerAdapter
 import com.asdk.tools.wpstatussaver.databinding.ActivityMediaViewBinding
+import com.asdk.tools.wpstatussaver.databinding.DialogMediaDetailsBinding
 import com.asdk.tools.wpstatussaver.model.StatusMedia
 import com.asdk.tools.wpstatussaver.util.StorageHelper
 import com.asdk.tools.wpstatussaver.util.WhatsAppLauncher
-import com.asdk.tools.wpstatussaver.util.WhatsAppPageTransformer
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.log10
+import kotlin.math.pow
 
 class MediaViewActivity : AppCompatActivity() {
 
@@ -68,6 +77,9 @@ class MediaViewActivity : AppCompatActivity() {
                 binding.bottomBar.paddingEnd,
                 (systemBars.bottom + (10 * resources.displayMetrics.density).toInt())
             )
+            insets
+        }
+
         setupViewPager()
         setupActions()
         setupSharedElementCallback()
@@ -75,7 +87,7 @@ class MediaViewActivity : AppCompatActivity() {
     }
 
     private fun setupSharedElementCallback() {
-        setEnterSharedElementCallback(object : androidx.core.app.SharedElementCallback() {
+        setEnterSharedElementCallback(object : SharedElementCallback() {
             override fun onMapSharedElements(names: MutableList<String>?, sharedElements: MutableMap<String, View>?) {
                 if (names != null && sharedElements != null) {
                     val holder = pagerAdapter.getViewHolderAt(currentPosition)
@@ -93,7 +105,7 @@ class MediaViewActivity : AppCompatActivity() {
     }
 
     private fun prepareFinishResult() {
-        val data = android.content.Intent().apply {
+        val data = Intent().apply {
             putExtra(EXTRA_CURRENT_POSITION, currentPosition)
         }
         setResult(RESULT_OK, data)
@@ -135,7 +147,7 @@ class MediaViewActivity : AppCompatActivity() {
         binding.viewPager.apply {
             adapter = pagerAdapter
             offscreenPageLimit = 1
-            setPageTransformer(androidx.viewpager2.widget.MarginPageTransformer((24 * resources.displayMetrics.density).toInt()))
+            setPageTransformer(MarginPageTransformer((24 * resources.displayMetrics.density).toInt()))
             setCurrentItem(currentPosition, false)
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -206,14 +218,14 @@ class MediaViewActivity : AppCompatActivity() {
         if (currentPosition !in mediaList.indices) return
         val status = mediaList[currentPosition]
 
-        val dialogBinding = com.asdk.tools.wpstatussaver.databinding.DialogMediaDetailsBinding.inflate(layoutInflater)
+        val dialogBinding = DialogMediaDetailsBinding.inflate(layoutInflater)
 
         dialogBinding.ivDetailTypeIcon.setImageResource(if (status.isVideo) R.drawable.ic_video else R.drawable.ic_photo)
         dialogBinding.tvDetailFileName.text = status.title
 
-        val dateFormat = java.text.SimpleDateFormat("MMM dd, yyyy  •  hh:mm a", java.util.Locale.getDefault())
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy  •  hh:mm a", Locale.getDefault())
         dialogBinding.tvDetailDate.text = if (status.dateModified > 0) {
-            dateFormat.format(java.util.Date(status.dateModified))
+            dateFormat.format(Date(status.dateModified))
         } else {
             "Unknown"
         }
@@ -225,7 +237,7 @@ class MediaViewActivity : AppCompatActivity() {
         val pathStr = if (status.path.isNotEmpty()) status.path else status.uriString
         dialogBinding.tvDetailPath.text = pathStr
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Details")
             .setView(dialogBinding.root)
             .setPositiveButton("Close", null)
@@ -235,8 +247,8 @@ class MediaViewActivity : AppCompatActivity() {
     private fun formatFileSize(bytes: Long): String {
         if (bytes <= 0) return "0 B"
         val units = arrayOf("B", "KB", "MB", "GB")
-        val digitGroups = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt().coerceIn(0, units.size - 1)
-        return String.format(java.util.Locale.getDefault(), "%.1f %s", bytes / Math.pow(1024.0, digitGroups.toDouble()), units[digitGroups])
+        val digitGroups = (log10(bytes.toDouble()) / log10(1024.0)).toInt().coerceIn(0, units.size - 1)
+        return String.format(Locale.getDefault(), "%.1f %s", bytes / 1024.0.pow(digitGroups.toDouble()), units[digitGroups])
     }
 
     private fun toggleTopBottomBars() {
@@ -270,7 +282,7 @@ class MediaViewActivity : AppCompatActivity() {
         if (currentPosition !in mediaList.indices) return
         val status = mediaList[currentPosition]
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.delete_confirm_title)
             .setMessage(R.string.delete_confirm_msg)
             .setPositiveButton(R.string.action_delete) { _, _ ->
