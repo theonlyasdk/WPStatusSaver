@@ -29,6 +29,14 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.Medium</item>
     </style>
 
+    <!-- Toolbar Theme Overlay for AppBar (Crisp White Icons in M2) -->
+    <style name="ThemeOverlay.App.Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">#CCFFFFFF</item>
+        <item name="actionMenuTextColor">@color/white</item>
+    </style>
+
     <!-- Switch Style with App Accent Color -->
     <style name="Widget.App.SwitchCompat" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="thumbTint">@color/switch_thumb_color</item>

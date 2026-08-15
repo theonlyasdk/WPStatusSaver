@@ -270,32 +270,17 @@ class MediaPagerAdapter(
             val iconRes = if (isPlaying) R.drawable.ic_play_arrow else R.drawable.ic_pause
             binding.ivCenterPlayIndicator.setImageResource(iconRes)
             binding.ivCenterPlayIndicator.animate().cancel()
+            binding.ivCenterPlayIndicator.scaleX = 1f
+            binding.ivCenterPlayIndicator.scaleY = 1f
+            binding.ivCenterPlayIndicator.alpha = 1f
             binding.ivCenterPlayIndicator.visibility = View.VISIBLE
-            binding.ivCenterPlayIndicator.alpha = 0f
-            binding.ivCenterPlayIndicator.scaleX = 0.65f
-            binding.ivCenterPlayIndicator.scaleY = 0.65f
 
             binding.ivCenterPlayIndicator.animate()
-                .alpha(1f)
-                .scaleX(1.05f)
-                .scaleY(1.05f)
-                .setDuration(160)
+                .alpha(0f)
+                .setStartDelay(400)
+                .setDuration(250)
                 .withEndAction {
-                    binding.ivCenterPlayIndicator.animate()
-                        .scaleX(1.0f)
-                        .scaleY(1.0f)
-                        .setDuration(80)
-                        .withEndAction {
-                            binding.ivCenterPlayIndicator.animate()
-                                .alpha(0f)
-                                .setStartDelay(320)
-                                .setDuration(220)
-                                .withEndAction {
-                                    binding.ivCenterPlayIndicator.visibility = View.GONE
-                                }
-                                .start()
-                        }
-                        .start()
+                    binding.ivCenterPlayIndicator.visibility = View.GONE
                 }
                 .start()
         }

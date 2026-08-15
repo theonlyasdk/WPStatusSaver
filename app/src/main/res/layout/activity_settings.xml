@@ -21,6 +21,8 @@
             app:navigationContentDescription="@string/cancel"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:navigationIconTint="?attr/appBarIconTint"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.App.Toolbar"
             app:title="@string/settings_title"
             app:titleTextColor="?attr/appBarTitleColor" />
 

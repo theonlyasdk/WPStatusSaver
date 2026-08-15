@@ -18,6 +18,13 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.Medium</item>
     </style>
 
+    <!-- Toolbar Theme Overlay for AppBar in M3 -->
+    <style name="ThemeOverlay.App.Toolbar" parent="ThemeOverlay.Material3.Toolbar.Surface">
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+        <item name="actionMenuTextColor">?attr/colorOnSurface</item>
+    </style>
+
     <!-- Translucent Media Viewer Theme with Live Background for Gestures -->
     <style name="Theme.WPStatusSaver.Fullscreen" parent="Theme.WPStatusSaver">
         <item name="android:windowIsTranslucent">true</item>
