@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <!-- Material 2 AppBar (Doesn't sit under status bar) -->
+    <!-- Material Dynamic AppBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whatsapp_primary"
-        android:elevation="4dp"
+        android:background="?attr/appBarBackground"
+        app:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,10 +24,9 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationContentDescription="@string/cancel"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@color/white"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:navigationIconTint="?attr/appBarIconTint"
             app:title="Status Preview"
-            app:titleTextColor="@color/white">
+            app:titleTextColor="?attr/appBarTitleColor">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -40,7 +39,7 @@
                     android:layout_marginEnd="8dp"
                     android:ellipsize="middle"
                     android:singleLine="true"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/appBarTitleColor"
                     android:textSize="17sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +60,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/white" />
+                    app:tint="?attr/appBarIconTint" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -69,7 +68,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- ViewPager2 for horizontal adjacent item swiping with WhatsApp-like transition -->
+    <!-- ViewPager2 for horizontal adjacent item swiping -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="0dp"
@@ -79,130 +78,130 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
-    <!-- Bottom Action Bar -->
+    <!-- Bottom Action Bar with Material 3 Rounded Action Buttons -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="78dp"
-        android:background="@color/surface_card"
+        android:background="?attr/colorSurface"
         android:elevation="6dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="14dp"
+        android:paddingStart="12dp"
         android:paddingTop="12dp"
-        android:paddingEnd="14dp"
+        android:paddingEnd="12dp"
         android:paddingBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Save Button -->
+        <!-- Save Button (M3 Filled Primary) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveMedia"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/whatsapp_primary"
+            android:backgroundTint="?attr/colorPrimary"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/action_save"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
-            app:cornerRadius="10dp"
+            app:cornerRadius="24dp"
             app:icon="@drawable/ic_file_download"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="20dp"
-            app:iconTint="@color/white"
+            app:iconPadding="6dp"
+            app:iconSize="18dp"
+            app:iconTint="?attr/colorOnPrimary"
             app:strokeWidth="0dp" />
 
-        <!-- Share Button -->
+        <!-- Share Button (M3 Tonal Container) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnShareMedia"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/window_background"
+            android:backgroundTint="?attr/colorSecondaryContainer"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/action_share"
-            android:textAllCaps="true"
-            android:textColor="@color/text_primary"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:textSize="13sp"
             android:textStyle="bold"
-            app:cornerRadius="10dp"
+            app:cornerRadius="24dp"
             app:icon="@drawable/ic_share"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="20dp"
-            app:iconTint="@color/text_primary"
+            app:iconPadding="6dp"
+            app:iconSize="18dp"
+            app:iconTint="?attr/colorOnSecondaryContainer"
             app:strokeWidth="0dp" />
 
-        <!-- Repost Button -->
+        <!-- Repost Button (M3 Tonal Container) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRepostMedia"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/window_background"
+            android:backgroundTint="?attr/colorSecondaryContainer"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/action_repost"
-            android:textAllCaps="true"
-            android:textColor="@color/text_primary"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnSecondaryContainer"
             android:textSize="13sp"
             android:textStyle="bold"
-            app:cornerRadius="10dp"
+            app:cornerRadius="24dp"
             app:icon="@drawable/ic_send"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="20dp"
-            app:iconTint="@color/text_primary"
+            app:iconPadding="6dp"
+            app:iconSize="18dp"
+            app:iconTint="?attr/colorOnSecondaryContainer"
             app:strokeWidth="0dp" />
 
-        <!-- Delete Button (Shown in Saved Tab) -->
+        <!-- Delete Button (Shown in Saved Tab - M3 Error Filled) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteMedia"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/delete_red"
+            android:backgroundTint="?attr/colorError"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/action_delete"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnError"
             android:textSize="13sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:cornerRadius="10dp"
+            app:cornerRadius="24dp"
             app:icon="@drawable/ic_delete"
             app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="20dp"
-            app:iconTint="@color/white"
+            app:iconPadding="6dp"
+            app:iconSize="18dp"
+            app:iconTint="?attr/colorOnError"
             app:strokeWidth="0dp"
             tools:visibility="visible" />
 

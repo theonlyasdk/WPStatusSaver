@@ -30,7 +30,7 @@
             android:id="@+id/previewProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/whatsapp_primary"
+            android:indeterminateTint="?attr/colorPrimary"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -140,8 +140,8 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:progressTint="@color/whatsapp_primary"
-                    android:thumbTint="@color/whatsapp_primary" />
+                    android:progressTint="?attr/colorPrimary"
+                    android:thumbTint="?attr/colorPrimary" />
 
                 <TextView
                     android:id="@+id/tvTotalDuration"
