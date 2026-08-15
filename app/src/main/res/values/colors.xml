@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand colors (Default Material 1 Palette) -->
+    <color name="whatsapp_primary">#075E54</color>
+    <color name="whatsapp_primary_dark">#054C44</color>
+    <color name="whatsapp_accent">#25D366</color>
+    <color name="whatsapp_light_green">#25D366</color>
+    <color name="whatsapp_appbar">#075E54</color>
+
+    <!-- Material 1 Palette -->
+    <color name="m1_primary">#075E54</color>
+    <color name="m1_primary_dark">#054C44</color>
+    <color name="m1_accent">#25D366</color>
+
+    <!-- Material 2 Palette -->
+    <color name="m2_primary">#008069</color>
+    <color name="m2_primary_dark">#005E4D</color>
+    <color name="m2_accent">#00A884</color>
+
+    <!-- Neutral / Background colors -->
+    <color name="window_background">#F5F5F5</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="overlay_dark">#99000000</color>
+    <color name="overlay_light">#33000000</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#9E9E9E</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <!-- Status / Action colors -->
+    <color name="saved_badge">#25D366</color>
+    <color name="delete_red">#D32F2F</color>
+    <color name="card_ripple">#1A075E54</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+</resources>

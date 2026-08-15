@@ -1,0 +1,35 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Main App Dark Theme -->
+    <style name="Theme.WPStatusSaver" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+        <item name="colorPrimary">@color/whatsapp_primary</item>
+        <item name="colorPrimaryDark">@color/whatsapp_primary_dark</item>
+        <item name="colorSecondary">@color/whatsapp_accent</item>
+        <item name="colorAccent">@color/whatsapp_accent</item>
+        <item name="android:statusBarColor">@color/whatsapp_primary_dark</item>
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/whatsapp_accent</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.Medium</item>
+    </style>
+
+    <!-- Translucent Media Viewer Theme with Live Background for Gestures -->
+    <style name="Theme.WPStatusSaver.Fullscreen" parent="Theme.WPStatusSaver">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
+    </style>
+
+    <!-- Shapes -->
+    <style name="ShapeAppearance.App.Small" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">4dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.Medium" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerSize">4dp</item>
+    </style>
+</resources>

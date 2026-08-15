@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1.5dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Square Thumbnail Ratio (Stock Android Gallery Tile) -->
+    <ImageView
+        android:id="@+id/ivThumbnail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/tab_images"
+        android:scaleType="centerCrop"
+        android:transitionName="transition_media"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_launcher" />
+
+    <!-- Bottom Dark Gradient for Controls -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_card_gradient"
+        app:layout_constraintBottom_toBottomOf="@+id/ivThumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/ivThumbnail"
+        app:layout_constraintStart_toStartOf="@+id/ivThumbnail" />
+
+    <!-- Video Play Badge -->
+    <ImageView
+        android:id="@+id/layoutVideoBadge"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_margin="6dp"
+        android:background="@drawable/bg_circle_button"
+        android:contentDescription="@string/tab_videos"
+        android:padding="6dp"
+        android:src="@drawable/ic_play_arrow"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white"
+        tools:visibility="visible" />
+
+    <!-- Save Button / Saved Indicator -->
+    <ImageButton
+        android:id="@+id/btnSave"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_circle_button"
+        android:contentDescription="@string/action_save"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_file_download"
+        app:layout_constraintBottom_toBottomOf="@+id/ivThumbnail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
+
+    <!-- Share Button -->
+    <ImageButton
+        android:id="@+id/btnShare"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_circle_button"
+        android:contentDescription="@string/action_share"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_share"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSave"
+        app:layout_constraintEnd_toStartOf="@+id/btnSave"
+        app:layout_constraintTop_toTopOf="@+id/btnSave"
+        app:tint="@color/white" />
+
+    <!-- Delete Button (Shown in Saved Tab) -->
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_circle_button"
+        android:contentDescription="@string/action_delete"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_delete"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSave"
+        app:layout_constraintEnd_toStartOf="@+id/btnShare"
+        app:layout_constraintTop_toTopOf="@+id/btnSave"
+        app:tint="@color/white"
+        tools:visibility="visible" />
+
+    <!-- Multi-Selection Dimming Overlay -->
+    <View
+        android:id="@+id/viewSelectedOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#55008069"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ivThumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/ivThumbnail"
+        app:layout_constraintStart_toStartOf="@+id/ivThumbnail"
+        app:layout_constraintTop_toTopOf="@+id/ivThumbnail" />
+
+    <!-- Multi-Selection Checkmark Badge -->
+    <ImageView
+        android:id="@+id/ivCheckSelected"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:contentDescription="@string/action_save"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_check_circle"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

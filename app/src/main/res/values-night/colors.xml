@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Theme colors -->
+    <color name="whatsapp_primary">#008069</color>
+    <color name="whatsapp_primary_dark">#004D40</color>
+    <color name="whatsapp_accent">#00A884</color>
+    <color name="whatsapp_light_green">#25D366</color>
+    <color name="whatsapp_appbar">#1F2C34</color>
+
+    <color name="window_background">#121B22</color>
+    <color name="surface_card">#1F2C34</color>
+    <color name="divider">#2A3942</color>
+    <color name="overlay_dark">#CC000000</color>
+    <color name="overlay_light">#66000000</color>
+
+    <color name="text_primary">#E9EDEF</color>
+    <color name="text_secondary">#8696A0</color>
+    <color name="text_hint">#667781</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <color name="saved_badge">#25D366</color>
+    <color name="delete_red">#EF5350</color>
+    <color name="card_ripple">#3300A884</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>
