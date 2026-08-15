@@ -185,14 +185,17 @@ class MediaViewActivity : AppCompatActivity() {
 
     private fun setupActions() {
         binding.toolbar.setNavigationOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             supportFinishAfterTransition()
         }
 
         binding.btnTopInfo.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             showMediaDetailsDialog()
         }
 
         val shareAction = View.OnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             if (currentPosition in mediaList.indices) {
                 WhatsAppLauncher.shareStatus(this, lifecycleScope, mediaList[currentPosition])
             }
@@ -200,16 +203,19 @@ class MediaViewActivity : AppCompatActivity() {
         binding.btnShareMedia.setOnClickListener(shareAction)
 
         binding.btnRepostMedia.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             if (currentPosition in mediaList.indices) {
                 WhatsAppLauncher.repostStatus(this, lifecycleScope, mediaList[currentPosition])
             }
         }
 
         binding.btnSaveMedia.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.success(it)
             saveCurrentMedia()
         }
 
         binding.btnDeleteMedia.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             showDeleteConfirmDialog()
         }
     }

@@ -160,6 +160,7 @@ class StatusAdapter(
             // Click listeners
             binding.root.setOnClickListener {
                 if (isSelectionMode) {
+                    com.asdk.tools.wpstatussaver.util.HapticHelper.selection(binding.root)
                     toggleSelection(status, bindingAdapterPosition)
                 } else {
                     onItemClick(status, binding.ivThumbnail)
@@ -167,6 +168,7 @@ class StatusAdapter(
             }
 
             binding.root.setOnLongClickListener {
+                com.asdk.tools.wpstatussaver.util.HapticHelper.longPress(binding.root)
                 if (!isSelectionMode) {
                     enterSelectionMode(status)
                     onItemLongClick?.invoke(status, bindingAdapterPosition)
@@ -177,14 +179,17 @@ class StatusAdapter(
             }
 
             binding.btnSave.setOnClickListener {
+                com.asdk.tools.wpstatussaver.util.HapticHelper.success(binding.btnSave)
                 onSaveClick(status, bindingAdapterPosition)
             }
 
             binding.btnShare.setOnClickListener {
+                com.asdk.tools.wpstatussaver.util.HapticHelper.click(binding.btnShare)
                 onShareClick(status)
             }
 
             binding.btnDelete.setOnClickListener {
+                com.asdk.tools.wpstatussaver.util.HapticHelper.click(binding.btnDelete)
                 onDeleteClick?.invoke(status, bindingAdapterPosition)
             }
         }

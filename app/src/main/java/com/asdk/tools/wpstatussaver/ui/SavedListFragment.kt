@@ -91,7 +91,8 @@ class SavedListFragment : Fragment() {
         binding.recyclerView.addOnItemTouchListener(dragSelectListener)
 
         val pinchZoomListener = com.asdk.tools.wpstatussaver.util.GridPinchZoomGestureListener(
-            binding.recyclerView
+            binding.recyclerView,
+            binding.swipeRefreshLayout
         ) { _ ->
             statusAdapter.notifyItemRangeChanged(0, statusAdapter.itemCount)
         }

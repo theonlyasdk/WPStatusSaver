@@ -2,18 +2,19 @@ package com.asdk.tools.wpstatussaver.util
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.animation.DecelerateInterpolator
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 
 class GridPinchZoomGestureListener(
     private val recyclerView: RecyclerView,
+    private val swipeRefreshLayout: SwipeRefreshLayout? = null,
     private val onSpanChanged: (Int) -> Unit
 ) : RecyclerView.OnItemTouchListener {
 
@@ -29,6 +30,8 @@ class GridPinchZoomGestureListener(
                 cumulativeScale = 1.0f
                 recyclerView.pivotX = detector.focusX
                 recyclerView.pivotY = detector.focusY
+                recyclerView.parent?.requestDisallowInterceptTouchEvent(true)
+                swipeRefreshLayout?.isEnabled = false
                 return true
             }
 
@@ -84,20 +87,34 @@ class GridPinchZoomGestureListener(
                     )
                     gridLayoutManager.spanCount = targetSpan
                     SettingsManager.setGridColumns(recyclerView.context, targetSpan)
-                    recyclerView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    HapticHelper.selection(recyclerView)
                     onSpanChanged(targetSpan)
                 }
 
                 cumulativeScale = 1.0f
+                swipeRefreshLayout?.isEnabled = true
+                recyclerView.parent?.requestDisallowInterceptTouchEvent(false)
             }
         }
     )
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
         if (e.pointerCount >= 2) {
+            rv.parent?.requestDisallowInterceptTouchEvent(true)
+            swipeRefreshLayout?.isEnabled = false
             scaleGestureDetector.onTouchEvent(e)
             return isScaling
         }
+
+        val action = e.actionMasked
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            if (isScaling) {
+                isScaling = false
+                swipeRefreshLayout?.isEnabled = true
+                rv.parent?.requestDisallowInterceptTouchEvent(false)
+            }
+        }
+
         if (isScaling) {
             scaleGestureDetector.onTouchEvent(e)
             return true
@@ -106,6 +123,14 @@ class GridPinchZoomGestureListener(
     }
 
     override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+        val action = e.actionMasked
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            if (isScaling) {
+                isScaling = false
+                swipeRefreshLayout?.isEnabled = true
+                rv.parent?.requestDisallowInterceptTouchEvent(false)
+            }
+        }
         scaleGestureDetector.onTouchEvent(e)
     }
 

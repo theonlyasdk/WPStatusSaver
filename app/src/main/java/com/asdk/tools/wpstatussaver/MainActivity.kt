@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
         binding.viewPager.offscreenPageLimit = 2
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(binding.bottomNavigation)
             when (item.itemId) {
                 R.id.nav_photos -> {
                     binding.viewPager.setCurrentItem(MainPagerAdapter.TAB_PHOTOS, true)
@@ -240,26 +241,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSelectionActions() {
         binding.btnCloseSelection.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             exitActiveSelectionMode()
         }
 
         binding.btnSelectAll.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             selectAllInActiveFragment()
         }
 
         binding.tvSelectedCount.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             selectAllInActiveFragment()
         }
 
         binding.btnBatchSave.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.success(it)
             batchSaveSelected()
         }
 
         binding.btnBatchShare.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             batchShareSelected()
         }
 
         binding.btnBatchDelete.setOnClickListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
             batchDeleteSelected()
         }
 

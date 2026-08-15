@@ -239,6 +239,7 @@ class MediaPagerAdapter(
         }
 
         fun togglePlayPause() {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.click(binding.btnPlayPause)
             if (binding.videoView.isPlaying) {
                 pauseVideo()
                 showCenterIndicator(isPlaying = false)
