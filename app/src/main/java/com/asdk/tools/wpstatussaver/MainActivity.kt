@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.appBarLayout.setPadding(0, systemBars.top, 0, 0)
+            binding.bottomNavigation.setPadding(0, 0, 0, systemBars.bottom)
             insets
         }
 
@@ -85,25 +86,36 @@ class MainActivity : AppCompatActivity() {
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.offscreenPageLimit = 2
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
-                MainPagerAdapter.TAB_PHOTOS -> {
-                    tab.setText(R.string.tab_images)
-                    tab.setIcon(R.drawable.tab_ic_photo)
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_photos -> {
+                    binding.viewPager.setCurrentItem(MainPagerAdapter.TAB_PHOTOS, true)
+                    true
                 }
-                MainPagerAdapter.TAB_VIDEOS -> {
-                    tab.setText(R.string.tab_videos)
-                    tab.setIcon(R.drawable.tab_ic_video)
+                R.id.nav_videos -> {
+                    binding.viewPager.setCurrentItem(MainPagerAdapter.TAB_VIDEOS, true)
+                    true
                 }
-                MainPagerAdapter.TAB_SAVED -> {
-                    tab.setText(R.string.tab_saved)
-                    tab.setIcon(R.drawable.tab_ic_saved)
+                R.id.nav_saved -> {
+                    binding.viewPager.setCurrentItem(MainPagerAdapter.TAB_SAVED, true)
+                    true
                 }
+                else -> false
             }
-        }.attach()
+        }
 
         binding.viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                val targetItemId = when (position) {
+                    MainPagerAdapter.TAB_PHOTOS -> R.id.nav_photos
+                    MainPagerAdapter.TAB_VIDEOS -> R.id.nav_videos
+                    MainPagerAdapter.TAB_SAVED -> R.id.nav_saved
+                    else -> R.id.nav_photos
+                }
+                if (binding.bottomNavigation.selectedItemId != targetItemId) {
+                    binding.bottomNavigation.selectedItemId = targetItemId
+                }
+
                 binding.viewPager.post {
                     val adapter = getActiveAdapter()
                     val count = adapter?.getSelectedCount() ?: 0

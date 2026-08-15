@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_photos"
+        android:icon="@drawable/tab_ic_photo"
+        android:title="@string/tab_images" />
+    <item
+        android:id="@+id/nav_videos"
+        android:icon="@drawable/tab_ic_video"
+        android:title="@string/tab_videos" />
+    <item
+        android:id="@+id/nav_saved"
+        android:icon="@drawable/tab_ic_saved"
+        android:title="@string/tab_saved" />
+</menu>

@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/window_background">
 
+    <!-- Top AppBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -164,26 +165,35 @@
 
         </FrameLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/whatsapp_primary"
-            app:tabGravity="fill"
-            app:tabIconTint="@color/tab_item_selector"
-            app:tabIndicatorColor="@color/white"
-            app:tabIndicatorHeight="3dp"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextAppearance="@style/TabTextAppearance.Material1"
-            app:tabTextColor="@color/tab_item_selector" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <!-- Main Content Container with ViewPager2 and BottomNavigationView -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- ViewPager2 for tab fragments -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Bottom Navigation View -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/surface_card"
+            android:elevation="8dp"
+            app:elevation="8dp"
+            app:itemIconTint="@color/bottom_nav_item_color"
+            app:itemTextColor="@color/bottom_nav_item_color"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_navigation_menu" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
