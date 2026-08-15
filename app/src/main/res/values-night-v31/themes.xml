@@ -25,6 +25,12 @@
         <item name="actionMenuTextColor">?attr/colorOnSurface</item>
     </style>
 
+    <!-- Popup Menu Theme Overlay for M3 (Dark Mode) -->
+    <style name="ThemeOverlay.App.PopupMenu" parent="ThemeOverlay.Material3.Dark">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+    </style>
+
     <!-- Translucent Media Viewer Theme with Live Background for Gestures -->
     <style name="Theme.WPStatusSaver.Fullscreen" parent="Theme.WPStatusSaver">
         <item name="android:windowIsTranslucent">true</item>

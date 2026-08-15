@@ -63,7 +63,7 @@ class MediaPagerAdapter(
 
     fun onPageSelected(position: Int) {
         for ((pos, holder) in activeHolders) {
-            val target = if (holder.currentStatus?.isVideo == true) holder.binding.layoutVideoPlayer else holder.binding.ivFullImage
+            val target = if (holder.currentStatus?.isVideo == true) holder.binding.ivVideoThumbnail else holder.binding.ivFullImage
             if (pos != position) {
                 holder.pauseVideo()
                 ViewCompat.setTransitionName(target, null)
@@ -105,8 +105,8 @@ class MediaPagerAdapter(
             binding.swipeDismissLayout.onDismiss = onDismiss
 
             // Set transitionName ONLY on the item matching the requested transition position
-            val targetSharedView = if (status.isVideo) binding.layoutVideoPlayer else binding.ivFullImage
-            val otherView = if (status.isVideo) binding.ivFullImage else binding.layoutVideoPlayer
+            val targetSharedView = if (status.isVideo) binding.ivVideoThumbnail else binding.ivFullImage
+            val otherView = if (status.isVideo) binding.ivFullImage else binding.ivVideoThumbnail
             ViewCompat.setTransitionName(otherView, null)
 
             if (position == initialPosition) {
@@ -127,6 +127,8 @@ class MediaPagerAdapter(
                 setupImage(status.uri, position)
             }
         }
+
+        private var isVideoPrepared = false
 
         private fun setupImage(uri: Uri, position: Int) {
             binding.ivFullImage.setOnScaleChangeListener { _, _, _ ->
@@ -176,13 +178,48 @@ class MediaPagerAdapter(
         }
 
         private fun setupVideo(uri: Uri, position: Int) {
+            isVideoPrepared = false
+            binding.ivVideoThumbnail.visibility = View.VISIBLE
+            binding.previewProgressBar.visibility = View.VISIBLE
+
+            // Instantly load video frame thumbnail via Glide for zero-lag swiping and smooth hero transition
+            Glide.with(itemView.context)
+                .asBitmap()
+                .load(uri)
+                .fitCenter()
+                .listener(object : RequestListener<android.graphics.Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<android.graphics.Bitmap>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        if (position == initialPosition) {
+                            onMediaReady()
+                        }
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: android.graphics.Bitmap,
+                        model: Any,
+                        target: Target<android.graphics.Bitmap>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        if (position == initialPosition) {
+                            onMediaReady()
+                        }
+                        return false
+                    }
+                })
+                .into(binding.ivVideoThumbnail)
+
             binding.videoView.setVideoURI(uri)
 
             binding.videoView.setOnPreparedListener { mediaPlayer ->
+                isVideoPrepared = true
                 binding.previewProgressBar.visibility = View.GONE
-                if (position == initialPosition) {
-                    onMediaReady()
-                }
                 mediaPlayer.isLooping = false
                 val duration = mediaPlayer.duration
                 binding.videoSeekBar.max = duration
@@ -194,6 +231,14 @@ class MediaPagerAdapter(
                 } else {
                     binding.btnPlayPause.setImageResource(R.drawable.ic_play_arrow)
                 }
+            }
+
+            binding.videoView.setOnInfoListener { _, what, _ ->
+                if (what == android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                    binding.ivVideoThumbnail.visibility = View.GONE
+                    binding.previewProgressBar.visibility = View.GONE
+                }
+                false
             }
 
             binding.videoView.setOnCompletionListener {
@@ -212,6 +257,22 @@ class MediaPagerAdapter(
 
             binding.layoutVideoPlayer.setOnClickListener {
                 onToggleBars()
+            }
+
+            binding.videoSeekBar.setOnTouchListener { v, event ->
+                if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                    val seekBar = v as SeekBar
+                    val paddingLeft = seekBar.paddingLeft
+                    val paddingRight = seekBar.paddingRight
+                    val width = seekBar.width - paddingLeft - paddingRight
+                    if (width > 0 && seekBar.max > 0) {
+                        val progress = (((event.x - paddingLeft) / width) * seekBar.max).toInt().coerceIn(0, seekBar.max)
+                        seekBar.progress = progress
+                        binding.videoView.seekTo(progress)
+                        binding.tvCurrentDuration.text = formatDuration(progress.toLong())
+                    }
+                }
+                false
             }
 
             binding.videoSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -250,10 +311,14 @@ class MediaPagerAdapter(
         }
 
         fun startVideo() {
+            if (!isVideoPrepared) {
+                currentStatus?.uri?.let { binding.videoView.setVideoURI(it) }
+            }
             if (binding.videoSeekBar.progress >= binding.videoSeekBar.max && binding.videoSeekBar.max > 0) {
                 binding.videoView.seekTo(0)
             }
             binding.videoView.start()
+            binding.ivVideoThumbnail.visibility = View.GONE
             binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
             handler.post(updateProgressRunnable)
         }
@@ -288,6 +353,7 @@ class MediaPagerAdapter(
         fun recycle() {
             handler.removeCallbacks(updateProgressRunnable)
             binding.videoView.stopPlayback()
+            binding.ivVideoThumbnail.setImageDrawable(null)
             binding.ivFullImage.setImageDrawable(null)
         }
 

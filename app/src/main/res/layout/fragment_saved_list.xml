@@ -43,14 +43,14 @@
                 android:layout_height="64dp"
                 android:contentDescription="@string/no_saved_title"
                 android:src="@android:drawable/ic_menu_gallery"
-                app:tint="@color/whatsapp_primary" />
+                app:tint="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/no_saved_title"
-                android:textColor="@color/text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -60,18 +60,20 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/no_saved_desc"
-                android:textColor="@color/text_secondary"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
 
         </LinearLayout>
 
-        <!-- Loading Progress -->
-        <ProgressBar
+        <!-- Loading Progress (Material 3 Circular Indicator) -->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/whatsapp_primary"
+            android:indeterminate="true"
             android:visibility="gone"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackColor="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

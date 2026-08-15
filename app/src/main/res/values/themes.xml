@@ -37,6 +37,12 @@
         <item name="actionMenuTextColor">@color/white</item>
     </style>
 
+    <!-- Popup Menu Theme Overlay for Light Mode in M2 -->
+    <style name="ThemeOverlay.App.PopupMenu" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:colorBackground">@color/surface_card</item>
+    </style>
+
     <!-- Switch Style with App Accent Color -->
     <style name="Widget.App.SwitchCompat" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="thumbTint">@color/switch_thumb_color</item>

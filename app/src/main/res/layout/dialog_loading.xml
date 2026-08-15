@@ -7,11 +7,14 @@
     android:orientation="horizontal"
     android:padding="24dp">
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBarLoading"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:indeterminateTint="@color/whatsapp_primary" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="?attr/colorPrimary"
+        app:trackColor="@android:color/transparent"
+        app:indicatorSize="36dp" />
 
     <TextView
         android:id="@+id/tvLoadingMessage"
@@ -19,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_weight="1"
-        android:textColor="@color/text_primary"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="16sp"
         android:text="Please wait..." />
 

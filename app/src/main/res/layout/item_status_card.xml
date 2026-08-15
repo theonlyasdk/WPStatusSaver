@@ -16,7 +16,6 @@
         android:layout_height="0dp"
         android:contentDescription="@string/tab_images"
         android:scaleType="centerCrop"
-        android:transitionName="transition_media"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,6 +25,7 @@
 
     <!-- Bottom Dark Gradient for Controls -->
     <View
+        android:id="@+id/viewCardGradient"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:background="@drawable/bg_card_gradient"

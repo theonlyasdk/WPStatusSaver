@@ -93,10 +93,11 @@ class MediaViewActivity : AppCompatActivity() {
                     val holder = pagerAdapter.getViewHolderAt(currentPosition)
                     if (holder != null) {
                         val currentView = if (holder.currentStatus?.isVideo == true) {
-                            holder.binding.layoutVideoPlayer
+                            holder.binding.ivVideoThumbnail.apply { visibility = View.VISIBLE }
                         } else {
                             holder.binding.ivFullImage
                         }
+                        ViewCompat.setTransitionName(currentView, "transition_media")
                         sharedElements["transition_media"] = currentView
                     }
                 }

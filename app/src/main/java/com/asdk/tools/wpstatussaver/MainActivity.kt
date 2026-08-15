@@ -103,7 +103,9 @@ class MainActivity : AppCompatActivity() {
                     val holder = recyclerView?.findViewHolderForAdapterPosition(reenterPosition) as? StatusAdapter.StatusViewHolder
                     val thumbView = holder?.binding?.ivThumbnail
                     if (thumbView != null) {
+                        ViewCompat.setTransitionName(thumbView, "transition_media")
                         sharedElements["transition_media"] = thumbView
+                        holder.fadeInCardControls()
                     }
                     reenterPosition = -1
                 }

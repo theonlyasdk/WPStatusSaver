@@ -141,9 +141,7 @@ class StatusListFragment : Fragment() {
         val pinchZoomListener = com.asdk.tools.wpstatussaver.util.GridPinchZoomGestureListener(
             binding.recyclerView,
             binding.swipeRefreshLayout
-        ) { _ ->
-            statusAdapter.notifyItemRangeChanged(0, statusAdapter.itemCount)
-        }
+        ) { _ -> }
         binding.recyclerView.addOnItemTouchListener(pinchZoomListener)
 
         statusAdapter.onItemLongClick = { _, position ->
@@ -165,8 +163,15 @@ class StatusListFragment : Fragment() {
     fun getCurrentItems(): List<StatusMedia> = currentStatuses
 
     private fun setupListeners() {
-        binding.swipeRefreshLayout.setColorSchemeResources(R.color.whatsapp_primary)
+        val typedValue = android.util.TypedValue()
+        val primaryColor = if (requireContext().theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)) {
+            typedValue.data
+        } else {
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.whatsapp_primary)
+        }
+        binding.swipeRefreshLayout.setColorSchemeColors(primaryColor)
         binding.swipeRefreshLayout.setOnRefreshListener {
+            com.asdk.tools.wpstatussaver.util.HapticHelper.selection(binding.swipeRefreshLayout)
             loadStatuses(showLoading = false)
         }
 

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -144,8 +145,25 @@ class StatusAdapter(
             }
         }
 
+        fun fadeOutCardControls() {
+            binding.layoutCardActions.animate().alpha(0f).setDuration(120).start()
+            binding.layoutVideoBadge.animate().alpha(0f).setDuration(120).start()
+            binding.viewCardGradient.animate().alpha(0f).setDuration(120).start()
+        }
+
+        fun fadeInCardControls() {
+            binding.layoutCardActions.animate().alpha(1f).setDuration(220).start()
+            binding.layoutVideoBadge.animate().alpha(1f).setDuration(220).start()
+            binding.viewCardGradient.animate().alpha(1f).setDuration(220).start()
+        }
+
         fun bind(status: StatusMedia) {
             val context = itemView.context
+
+            binding.layoutCardActions.alpha = 1f
+            binding.layoutVideoBadge.alpha = 1f
+            binding.viewCardGradient.alpha = 1f
+            ViewCompat.setTransitionName(binding.ivThumbnail, null)
 
             // Load media thumbnail via Glide with smooth fade-in
             Glide.with(context)
@@ -162,6 +180,8 @@ class StatusAdapter(
                     com.asdk.tools.wpstatussaver.util.HapticHelper.selection(binding.root)
                     toggleSelection(status, bindingAdapterPosition)
                 } else {
+                    ViewCompat.setTransitionName(binding.ivThumbnail, "transition_media")
+                    fadeOutCardControls()
                     onItemClick(status, binding.ivThumbnail)
                 }
             }

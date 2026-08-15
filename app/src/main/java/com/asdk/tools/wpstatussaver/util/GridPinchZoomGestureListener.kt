@@ -1,7 +1,5 @@
 package com.asdk.tools.wpstatussaver.util
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.animation.DecelerateInterpolator
@@ -9,7 +7,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.transition.AutoTransition
+import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 
 class GridPinchZoomGestureListener(
@@ -38,7 +36,7 @@ class GridPinchZoomGestureListener(
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val scaleFactor = detector.scaleFactor
                 cumulativeScale *= scaleFactor
-                cumulativeScale = cumulativeScale.coerceIn(0.68f, 1.45f)
+                cumulativeScale = cumulativeScale.coerceIn(0.75f, 1.35f)
 
                 recyclerView.pivotX = detector.focusX
                 recyclerView.pivotY = detector.focusY
@@ -66,34 +64,32 @@ class GridPinchZoomGestureListener(
                     targetSpan = 2
                 }
 
-                // Smoothly spring scale back to 1.0f
-                val animX = ObjectAnimator.ofFloat(recyclerView, "scaleX", recyclerView.scaleX, 1.0f)
-                val animY = ObjectAnimator.ofFloat(recyclerView, "scaleY", recyclerView.scaleY, 1.0f)
-                AnimatorSet().apply {
-                    playTogether(animX, animY)
-                    duration = 180
-                    interpolator = DecelerateInterpolator()
-                    start()
-                }
-
-                if (targetSpan != currentSpan && gridLayoutManager != null) {
-                    // Google Photos-like smooth animated transition between grid columns
-                    TransitionManager.beginDelayedTransition(
-                        recyclerView,
-                        AutoTransition().apply {
-                            duration = 240
-                            interpolator = FastOutSlowInInterpolator()
+                // Smoothly spring scale back to 1.0f without instant snaps
+                recyclerView.animate()
+                    .scaleX(1.0f)
+                    .scaleY(1.0f)
+                    .setDuration(160)
+                    .setInterpolator(DecelerateInterpolator())
+                    .withEndAction {
+                        if (targetSpan != currentSpan && gridLayoutManager != null) {
+                            TransitionManager.beginDelayedTransition(
+                                recyclerView,
+                                ChangeBounds().apply {
+                                    duration = 200
+                                    interpolator = FastOutSlowInInterpolator()
+                                }
+                            )
+                            gridLayoutManager.spanCount = targetSpan
+                            SettingsManager.setGridColumns(recyclerView.context, targetSpan)
+                            HapticHelper.selection(recyclerView)
+                            onSpanChanged(targetSpan)
                         }
-                    )
-                    gridLayoutManager.spanCount = targetSpan
-                    SettingsManager.setGridColumns(recyclerView.context, targetSpan)
-                    HapticHelper.selection(recyclerView)
-                    onSpanChanged(targetSpan)
-                }
+                        swipeRefreshLayout?.isEnabled = true
+                        recyclerView.parent?.requestDisallowInterceptTouchEvent(false)
+                    }
+                    .start()
 
                 cumulativeScale = 1.0f
-                swipeRefreshLayout?.isEnabled = true
-                recyclerView.parent?.requestDisallowInterceptTouchEvent(false)
             }
         }
     )

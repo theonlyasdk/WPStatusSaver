@@ -25,13 +25,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Preview Loading Spinner -->
-        <ProgressBar
+        <!-- Preview Loading Spinner (Material 3 Circular Indicator) -->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/previewProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="?attr/colorPrimary"
+            android:indeterminate="true"
             android:visibility="gone"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackColor="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="center"
-                app:layout_constraintBottom_toTopOf="@+id/layoutVideoControls"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -66,14 +68,22 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true" />
 
+                <ImageView
+                    android:id="@+id/ivVideoThumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/tab_videos" />
+
             </RelativeLayout>
 
-            <!-- Large Center Touch Area for Play / Pause Toggle -->
+            <!-- Large Center Touch Area for Play / Pause Toggle (No Ripple) -->
             <View
                 android:id="@+id/viewCenterPlayToggle"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"
                 app:layout_constraintBottom_toTopOf="@+id/layoutVideoControls"
@@ -100,16 +110,16 @@
                 app:tint="@color/white"
                 tools:visibility="visible" />
 
-            <!-- Bottom Video Control Bar -->
+            <!-- Bottom Video Control Bar (Smooth Overlay Gradient) -->
             <LinearLayout
                 android:id="@+id/layoutVideoControls"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_card_gradient"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_video_control_gradient"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="8dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -117,11 +127,11 @@
                 <!-- Play / Pause Button in Control Row -->
                 <ImageButton
                     android:id="@+id/btnPlayPause"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/tab_videos"
-                    android:padding="8dp"
+                    android:padding="6dp"
                     android:src="@drawable/ic_play_arrow"
                     app:tint="@color/white" />
 
@@ -129,6 +139,7 @@
                     android:id="@+id/tvCurrentDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     tools:text="00:00" />
@@ -136,11 +147,17 @@
                 <SeekBar
                     android:id="@+id/videoSeekBar"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
                     android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
                     android:progressTint="?attr/colorPrimary"
+                    android:splitTrack="false"
                     android:thumbTint="?attr/colorPrimary" />
 
                 <TextView

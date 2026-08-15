@@ -317,6 +317,54 @@ object StorageHelper {
         }
     }
 
+    fun getMediaReadPermissions(): Array<String> {
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                arrayOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
+                )
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                arrayOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO
+                )
+            }
+            Build.VERSION.SDK_INT <= Build.VERSION_CODES.P -> {
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
+            else -> {
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+        }
+    }
+
+    fun hasMediaReadPermission(context: Context): Boolean {
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_MEDIA_VIDEO
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+            else -> {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+    }
+
     suspend fun loadSavedMedia(context: Context): List<StatusMedia> = withContext(Dispatchers.IO) {
         val savedList = mutableListOf<StatusMedia>()
         val seenNames = mutableSetOf<String>()
@@ -352,8 +400,10 @@ object StorageHelper {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                queryMediaStore(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, savedList, seenNames)
-                queryMediaStore(context, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, savedList, seenNames)
+                val imageUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+                val videoUri = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+                queryMediaStore(context, imageUri, false, savedList, seenNames)
+                queryMediaStore(context, videoUri, true, savedList, seenNames)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -376,8 +426,8 @@ object StorageHelper {
             MediaStore.MediaColumns.SIZE,
             MediaStore.MediaColumns.RELATIVE_PATH
         )
-        val selection = "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?"
-        val selectionArgs = arrayOf("%$SAVED_FOLDER_NAME%")
+        val selection = "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ? OR ${MediaStore.MediaColumns.DATA} LIKE ?"
+        val selectionArgs = arrayOf("%$SAVED_FOLDER_NAME%", "%$SAVED_FOLDER_NAME%")
 
         try {
             context.contentResolver.query(

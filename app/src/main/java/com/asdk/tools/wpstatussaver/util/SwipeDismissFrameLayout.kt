@@ -124,6 +124,7 @@ class SwipeDismissFrameLayout @JvmOverloads constructor(
         val scale = (1f - progress * 0.18f).coerceIn(0.82f, 1f)
         child.scaleX = scale
         child.scaleY = scale
+        child.alpha = 1f
 
         val bgAlpha = (1f - progress * 0.85f).coerceIn(0f, 1f)
         backgroundView?.alpha = bgAlpha
@@ -139,10 +140,12 @@ class SwipeDismissFrameLayout @JvmOverloads constructor(
         val extraOffset = 40 * resources.displayMetrics.density
         val targetY = child.translationY + if (dy > 0 || yVelocity > 0) extraOffset else -extraOffset
 
+        child.alpha = 1f
         child.animate()
             .translationY(targetY)
             .scaleX(0.85f)
             .scaleY(0.85f)
+            .alpha(1f)
             .setDuration(150)
             .setInterpolator(DecelerateInterpolator())
             .setListener(object : AnimatorListenerAdapter() {
@@ -161,10 +164,12 @@ class SwipeDismissFrameLayout @JvmOverloads constructor(
     private fun animateRestore() {
         isAnimating = true
         val child = getChildAt(0) ?: this
+        child.alpha = 1f
         child.animate()
             .translationY(0f)
             .scaleX(1f)
             .scaleY(1f)
+            .alpha(1f)
             .setDuration(220)
             .setInterpolator(DecelerateInterpolator())
             .setListener(object : AnimatorListenerAdapter() {
@@ -174,9 +179,9 @@ class SwipeDismissFrameLayout @JvmOverloads constructor(
             })
             .start()
 
-        backgroundView?.animate()?.alpha(1f)?.setDuration(220)?.start()
+        backgroundView?.animate()?.alpha(1f)?.setDuration(200)?.start()
         for (v in viewsToFade) {
-            v.animate().alpha(1f).setDuration(220).start()
+            v.animate().alpha(1f).setDuration(200).start()
         }
     }
 }
