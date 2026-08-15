@@ -58,8 +58,11 @@ class SavedListFragment : Fragment() {
         statusAdapter = StatusAdapter(
             isSavedTab = true,
             onItemClick = { status, sharedView ->
+                val pos = savedStatuses.indexOf(status).coerceAtLeast(0)
                 val intent = Intent(requireContext(), MediaViewActivity::class.java).apply {
                     putExtra(MediaViewActivity.EXTRA_STATUS_MEDIA, status)
+                    putExtra(MediaViewActivity.EXTRA_MEDIA_LIST, ArrayList(savedStatuses))
+                    putExtra(MediaViewActivity.EXTRA_INITIAL_POSITION, pos)
                 }
                 val options = androidx.core.app.ActivityOptionsCompat.makeSceneTransitionAnimation(
                     requireActivity(),

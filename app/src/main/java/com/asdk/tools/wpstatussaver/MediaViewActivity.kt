@@ -1,65 +1,66 @@
 package com.asdk.tools.wpstatussaver
 
-import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
-import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
+import com.asdk.tools.wpstatussaver.adapter.MediaPagerAdapter
 import com.asdk.tools.wpstatussaver.databinding.ActivityMediaViewBinding
 import com.asdk.tools.wpstatussaver.model.StatusMedia
 import com.asdk.tools.wpstatussaver.util.StorageHelper
 import com.asdk.tools.wpstatussaver.util.WhatsAppLauncher
-import com.bumptech.glide.Glide
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
+import com.asdk.tools.wpstatussaver.util.WhatsAppPageTransformer
 import kotlinx.coroutines.launch
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class MediaViewActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMediaViewBinding
-    private var statusMedia: StatusMedia? = null
-
-    private val handler = Handler(Looper.getMainLooper())
-    private var isUserSeeking = false
-
-    private val updateProgressRunnable = object : Runnable {
-        override fun run() {
-            if (binding.videoView.isPlaying && !isUserSeeking) {
-                val current = binding.videoView.currentPosition
-                binding.videoSeekBar.progress = current
-                binding.tvCurrentDuration.text = formatDuration(current.toLong())
-            }
-            handler.postDelayed(this, 200)
-        }
-    }
+    private var mediaList: MutableList<StatusMedia> = mutableListOf()
+    private var currentPosition: Int = 0
+    private lateinit var pagerAdapter: MediaPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        statusMedia = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra(EXTRA_STATUS_MEDIA, StatusMedia::class.java)
+        val passedList = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra(EXTRA_MEDIA_LIST, ArrayList::class.java) as? ArrayList<*>
         } else {
             @Suppress("DEPRECATION")
-            intent.getSerializableExtra(EXTRA_STATUS_MEDIA) as? StatusMedia
+            intent.getSerializableExtra(EXTRA_MEDIA_LIST) as? ArrayList<*>
         }
 
-        if (statusMedia == null) {
+        if (passedList != null) {
+            mediaList = passedList.filterIsInstance<StatusMedia>().toMutableList()
+        }
+
+        if (mediaList.isEmpty()) {
+            val singleStatus = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra(EXTRA_STATUS_MEDIA, StatusMedia::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getSerializableExtra(EXTRA_STATUS_MEDIA) as? StatusMedia
+            }
+            if (singleStatus != null) {
+                mediaList.add(singleStatus)
+            }
+        }
+
+        currentPosition = intent.getIntExtra(EXTRA_INITIAL_POSITION, 0).coerceIn(0, (mediaList.size - 1).coerceAtLeast(0))
+
+        if (mediaList.isEmpty()) {
             Toast.makeText(this, "Media not found", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.mediaRootLayout) { _, insets ->
-            val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mediaRootLayout) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.appBarLayout.setPadding(0, systemBars.top, 0, 0)
             binding.bottomBar.setPadding(
                 binding.bottomBar.paddingStart,
@@ -70,177 +71,95 @@ class MediaViewActivity : AppCompatActivity() {
             insets
         }
 
-        setupUI()
+        setupViewPager()
+        setupActions()
         supportPostponeEnterTransition()
-        setupMedia()
     }
 
-    private fun setupUI() {
-        val status = statusMedia ?: return
+    private fun setupViewPager() {
+        pagerAdapter = MediaPagerAdapter(
+            items = mediaList,
+            onMediaReady = {
+                supportStartPostponedEnterTransition()
+            },
+            onDismiss = {
+                supportFinishAfterTransition()
+            },
+            onToggleBars = {
+                toggleTopBottomBars()
+            },
+            onZoomChanged = { isZoomed ->
+                binding.viewPager.isUserInputEnabled = !isZoomed
+            },
+            getViewsToFade = {
+                listOf(binding.appBarLayout, binding.bottomBar)
+            }
+        )
 
-        binding.tvMediaTitle.text = status.title
+        binding.viewPager.apply {
+            adapter = pagerAdapter
+            offscreenPageLimit = 1
+            setPageTransformer(WhatsAppPageTransformer((32 * resources.displayMetrics.density).toInt()))
+            setCurrentItem(currentPosition, false)
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    currentPosition = position
+                    pagerAdapter.onPageSelected(position)
+                    updateCurrentItemUI()
+                }
+            })
+        }
 
-        if (status.isSaved) {
+        updateCurrentItemUI()
+    }
+
+    private fun updateCurrentItemUI() {
+        if (currentPosition !in mediaList.indices) return
+        val current = mediaList[currentPosition]
+
+        binding.tvMediaTitle.text = if (mediaList.size > 1) {
+            "${currentPosition + 1} of ${mediaList.size}  •  ${current.title}"
+        } else {
+            current.title
+        }
+
+        if (current.isSaved) {
             binding.btnDeleteMedia.visibility = View.VISIBLE
             binding.btnSaveMedia.visibility = View.GONE
         } else {
             binding.btnDeleteMedia.visibility = View.GONE
             binding.btnSaveMedia.visibility = View.VISIBLE
+            binding.btnSaveMedia.text = getString(R.string.action_save)
+            binding.btnSaveMedia.setIconResource(R.drawable.ic_file_download)
+            binding.btnSaveMedia.isEnabled = true
         }
+    }
 
+    private fun setupActions() {
         binding.toolbar.setNavigationOnClickListener {
             supportFinishAfterTransition()
         }
 
         val shareAction = View.OnClickListener {
-            WhatsAppLauncher.shareStatus(this, lifecycleScope, status)
+            if (currentPosition in mediaList.indices) {
+                WhatsAppLauncher.shareStatus(this, lifecycleScope, mediaList[currentPosition])
+            }
         }
         binding.btnTopShare.setOnClickListener(shareAction)
         binding.btnShareMedia.setOnClickListener(shareAction)
 
         binding.btnRepostMedia.setOnClickListener {
-            WhatsAppLauncher.repostStatus(this, lifecycleScope, status)
+            if (currentPosition in mediaList.indices) {
+                WhatsAppLauncher.repostStatus(this, lifecycleScope, mediaList[currentPosition])
+            }
         }
 
         binding.btnSaveMedia.setOnClickListener {
-            saveMedia()
+            saveCurrentMedia()
         }
 
         binding.btnDeleteMedia.setOnClickListener {
             showDeleteConfirmDialog()
-        }
-    }
-
-    private fun setupMedia() {
-        val status = statusMedia ?: return
-
-        if (status.isVideo) {
-            binding.ivFullImage.visibility = View.GONE
-            binding.layoutVideoPlayer.visibility = View.VISIBLE
-            binding.previewProgressBar.visibility = View.VISIBLE
-            setupVideoPlayer(status.uri)
-        } else {
-            binding.layoutVideoPlayer.visibility = View.GONE
-            binding.ivFullImage.visibility = View.VISIBLE
-            binding.previewProgressBar.visibility = View.VISIBLE
-
-            Glide.with(this)
-                .load(status.uri)
-                .fitCenter()
-                .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
-                    override fun onLoadFailed(
-                        e: com.bumptech.glide.load.engine.GlideException?,
-                        model: Any?,
-                        target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        binding.previewProgressBar.visibility = View.GONE
-                        supportStartPostponedEnterTransition()
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: android.graphics.drawable.Drawable,
-                        model: Any,
-                        target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
-                        dataSource: com.bumptech.glide.load.DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        binding.previewProgressBar.visibility = View.GONE
-                        supportStartPostponedEnterTransition()
-                        return false
-                    }
-                })
-                .into(binding.ivFullImage)
-        }
-
-        binding.swipeDismissLayout.backgroundView = binding.mediaRootLayout
-        binding.swipeDismissLayout.viewsToFade = listOf(binding.appBarLayout, binding.bottomBar)
-        binding.swipeDismissLayout.isZoomedPredicate = {
-            if (status.isVideo) false else binding.ivFullImage.scale > 1.05f
-        }
-        binding.swipeDismissLayout.onDismiss = {
-            supportFinishAfterTransition()
-        }
-    }
-
-    private fun setupVideoPlayer(uri: Uri) {
-        binding.videoView.setVideoURI(uri)
-
-        binding.videoView.setOnPreparedListener { mediaPlayer ->
-            binding.previewProgressBar.visibility = View.GONE
-            supportStartPostponedEnterTransition()
-            mediaPlayer.isLooping = false
-            val duration = mediaPlayer.duration
-            binding.videoSeekBar.max = duration
-            binding.tvTotalDuration.text = formatDuration(duration.toLong())
-            binding.tvCurrentDuration.text = formatDuration(0)
-
-            // Auto-start video if enabled in settings
-            if (com.asdk.tools.wpstatussaver.util.SettingsManager.isAutoPlayVideo(this@MediaViewActivity)) {
-                binding.videoView.start()
-                binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
-                handler.post(updateProgressRunnable)
-            } else {
-                binding.btnPlayPause.setImageResource(R.drawable.ic_play_arrow)
-            }
-        }
-
-        binding.videoView.setOnCompletionListener {
-            binding.btnPlayPause.setImageResource(R.drawable.ic_play_arrow)
-            binding.videoSeekBar.progress = binding.videoSeekBar.max
-        }
-
-        binding.btnPlayPause.setOnClickListener {
-            togglePlayPause()
-        }
-
-        // Tapping the center area of the video toggles playback
-        binding.viewCenterPlayToggle.setOnClickListener {
-            togglePlayPause()
-        }
-
-        // Tapping outside the center area toggles toolbar & controls visibility
-        binding.layoutVideoPlayer.setOnClickListener {
-            toggleTopBottomBars()
-        }
-
-        binding.ivFullImage.setOnPhotoTapListener { _, _, _ ->
-            toggleTopBottomBars()
-        }
-        binding.ivFullImage.setOnOutsidePhotoTapListener {
-            toggleTopBottomBars()
-        }
-
-        binding.videoSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    binding.videoView.seekTo(progress)
-                    binding.tvCurrentDuration.text = formatDuration(progress.toLong())
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                isUserSeeking = true
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                isUserSeeking = false
-            }
-        })
-    }
-
-    private fun togglePlayPause() {
-        if (binding.videoView.isPlaying) {
-            binding.videoView.pause()
-            binding.btnPlayPause.setImageResource(R.drawable.ic_play_arrow)
-        } else {
-            if (binding.videoSeekBar.progress >= binding.videoSeekBar.max && binding.videoSeekBar.max > 0) {
-                binding.videoView.seekTo(0)
-            }
-            binding.videoView.start()
-            binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
-            handler.post(updateProgressRunnable)
         }
     }
 
@@ -251,8 +170,10 @@ class MediaViewActivity : AppCompatActivity() {
         binding.bottomBar.visibility = newVisibility
     }
 
-    private fun saveMedia() {
-        val status = statusMedia ?: return
+    private fun saveCurrentMedia() {
+        if (currentPosition !in mediaList.indices) return
+        val status = mediaList[currentPosition]
+
         StorageHelper.requestSaveWithLocationChoice(this, status) { location ->
             lifecycleScope.launch {
                 val success = StorageHelper.saveMedia(this@MediaViewActivity, status, location)
@@ -270,48 +191,45 @@ class MediaViewActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmDialog() {
-        val status = statusMedia ?: return
+        if (currentPosition !in mediaList.indices) return
+        val status = mediaList[currentPosition]
+
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle(R.string.delete_confirm_title)
             .setMessage(R.string.delete_confirm_msg)
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                deleteMedia(status)
+                deleteCurrentMedia(status)
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
-    private fun deleteMedia(status: StatusMedia) {
+    private fun deleteCurrentMedia(status: StatusMedia) {
         lifecycleScope.launch {
             val success = StorageHelper.deleteSavedMedia(this@MediaViewActivity, status)
             if (success) {
                 Toast.makeText(this@MediaViewActivity, getString(R.string.deleted_success), Toast.LENGTH_SHORT).show()
-                finish()
+                mediaList.removeAt(currentPosition)
+                if (mediaList.isEmpty()) {
+                    finish()
+                } else {
+                    currentPosition = currentPosition.coerceIn(0, mediaList.size - 1)
+                    pagerAdapter.notifyDataSetChanged()
+                    binding.viewPager.setCurrentItem(currentPosition, false)
+                    updateCurrentItemUI()
+                }
             }
         }
     }
 
-    private fun formatDuration(millis: Long): String {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(minutes)
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-    }
-
     override fun onPause() {
         super.onPause()
-        if (binding.videoView.isPlaying) {
-            binding.videoView.pause()
-        }
-        handler.removeCallbacks(updateProgressRunnable)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.videoView.stopPlayback()
-        handler.removeCallbacks(updateProgressRunnable)
+        pagerAdapter.pauseAllVideos()
     }
 
     companion object {
         const val EXTRA_STATUS_MEDIA = "extra_status_media"
+        const val EXTRA_MEDIA_LIST = "extra_media_list"
+        const val EXTRA_INITIAL_POSITION = "extra_initial_position"
     }
 }

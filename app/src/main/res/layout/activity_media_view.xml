@@ -69,134 +69,15 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Swipe Dismiss Frame Container (Google Photos Style Gestures) -->
-    <com.asdk.tools.wpstatussaver.util.SwipeDismissFrameLayout
-        android:id="@+id/swipeDismissLayout"
+    <!-- ViewPager2 for horizontal adjacent item swiping with WhatsApp-like transition -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
-
-        <!-- Main Image Viewer with Pinch-To-Zoom & Pan -->
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/ivFullImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/tab_images"
-            android:scaleType="fitCenter"
-            android:transitionName="transition_media"
-            android:visibility="visible" />
-
-        <!-- Preview Loading Spinner -->
-        <ProgressBar
-            android:id="@+id/previewProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminateTint="@color/whatsapp_primary"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <!-- Video Player Container -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutVideoPlayer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black"
-            android:transitionName="transition_media"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:gravity="center"
-                app:layout_constraintBottom_toTopOf="@+id/layoutVideoControls"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <VideoView
-                    android:id="@+id/videoView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true" />
-
-            </RelativeLayout>
-
-            <!-- Large Center Touch Area for Play / Pause Toggle -->
-            <View
-                android:id="@+id/viewCenterPlayToggle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                app:layout_constraintBottom_toTopOf="@+id/layoutVideoControls"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.65"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.75" />
-
-            <!-- Bottom Video Control Bar -->
-            <LinearLayout
-                android:id="@+id/layoutVideoControls"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_card_gradient"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="8dp"
-                android:paddingEnd="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <!-- Play / Pause Button in Control Row -->
-                <ImageButton
-                    android:id="@+id/btnPlayPause"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/tab_videos"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_play_arrow"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:id="@+id/tvCurrentDuration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    tools:text="00:00" />
-
-                <SeekBar
-                    android:id="@+id/videoSeekBar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:progressTint="@color/whatsapp_primary"
-                    android:thumbTint="@color/whatsapp_primary" />
-
-                <TextView
-                    android:id="@+id/tvTotalDuration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    tools:text="00:30" />
-
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.asdk.tools.wpstatussaver.util.SwipeDismissFrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
     <!-- Bottom Action Bar -->
     <LinearLayout
