@@ -200,7 +200,9 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchAskSaveLocation"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/switch_thumb_color"
+                    app:trackTint="@color/switch_track_color" />
             </LinearLayout>
 
             <!-- Option 5: Default Save Location -->
@@ -350,7 +352,9 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchAutoPlay"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/switch_thumb_color"
+                    app:trackTint="@color/switch_track_color" />
             </LinearLayout>
 
             <!-- Option 7: Show Video Badges -->
@@ -389,7 +393,9 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchVideoBadge"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/switch_thumb_color"
+                    app:trackTint="@color/switch_track_color" />
             </LinearLayout>
 
             <View

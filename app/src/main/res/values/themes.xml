@@ -4,13 +4,22 @@
         <item name="colorPrimary">@color/whatsapp_primary</item>
         <item name="colorPrimaryDark">@color/whatsapp_primary_dark</item>
         <item name="colorSecondary">@color/whatsapp_accent</item>
+        <item name="colorSecondaryVariant">@color/whatsapp_primary</item>
         <item name="colorAccent">@color/whatsapp_accent</item>
         <item name="android:statusBarColor">@color/whatsapp_primary_dark</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/whatsapp_accent</item>
+        <item name="switchStyle">@style/Widget.App.SwitchCompat</item>
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.Small</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.Medium</item>
+    </style>
+
+    <!-- Switch Style with App Accent Color -->
+    <style name="Widget.App.SwitchCompat" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="thumbTint">@color/switch_thumb_color</item>
+        <item name="trackTint">@color/switch_track_color</item>
+        <item name="colorControlActivated">@color/whatsapp_accent</item>
     </style>
 
     <!-- Translucent Media Viewer Theme with Live Background for Gestures -->
