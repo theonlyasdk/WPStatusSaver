@@ -82,10 +82,11 @@
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="78dp"
+        android:layout_height="wrap_content"
         android:background="?attr/colorSurface"
         android:elevation="6dp"
         android:gravity="center_vertical"
+        android:minHeight="72dp"
         android:orientation="horizontal"
         android:paddingStart="12dp"
         android:paddingTop="12dp"
