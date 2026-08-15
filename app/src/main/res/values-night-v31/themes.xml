@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Material 3 You Night Theme for Android 12+ (API 31+) -->
+    <style name="Theme.WPStatusSaver" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="appBarBackground">?attr/colorSurface</item>
+        <item name="appBarTitleColor">?attr/colorOnSurface</item>
+        <item name="appBarIconTint">?attr/colorOnSurface</item>
+        <item name="appBarSourceButtonBackground">?attr/colorSurfaceVariant</item>
+        <item name="appBarSourceButtonTextColor">?attr/colorOnSurfaceVariant</item>
+        <item name="selectionBarBackground">?attr/colorSecondaryContainer</item>
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.Medium</item>
+    </style>
+
+    <!-- Translucent Media Viewer Theme with Live Background for Gestures -->
+    <style name="Theme.WPStatusSaver.Fullscreen" parent="Theme.WPStatusSaver">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
+    </style>
+</resources>
