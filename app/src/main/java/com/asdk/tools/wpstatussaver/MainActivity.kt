@@ -57,6 +57,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Ensure bottom navigation background is consistently tinted on all Android versions (including Android 7.1.2)
+        val navTypedValue = android.util.TypedValue()
+        theme.resolveAttribute(R.attr.bottomNavBackground, navTypedValue, true)
+        val navBgColor = if (navTypedValue.resourceId != 0) {
+            androidx.core.content.ContextCompat.getColor(this, navTypedValue.resourceId)
+        } else {
+            navTypedValue.data
+        }
+        binding.bottomNavigation.setBackgroundColor(navBgColor)
+        binding.bottomNavigation.backgroundTintList = android.content.res.ColorStateList.valueOf(navBgColor)
+
         setupViewPager()
         setupHeaderActions()
         setupSelectionActions()
