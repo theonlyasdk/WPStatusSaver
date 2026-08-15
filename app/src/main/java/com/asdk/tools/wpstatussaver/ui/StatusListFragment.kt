@@ -159,6 +159,8 @@ class StatusListFragment : Fragment() {
 
     fun getAdapter(): StatusAdapter = statusAdapter
 
+    fun getRecyclerView(): androidx.recyclerview.widget.RecyclerView = binding.recyclerView
+
     fun getCurrentItems(): List<StatusMedia> = currentStatuses
 
     private fun setupListeners() {

@@ -68,12 +68,47 @@ class MediaViewActivity : AppCompatActivity() {
                 binding.bottomBar.paddingEnd,
                 (systemBars.bottom + (10 * resources.displayMetrics.density).toInt())
             )
-            insets
-        }
-
         setupViewPager()
         setupActions()
+        setupSharedElementCallback()
         supportPostponeEnterTransition()
+    }
+
+    private fun setupSharedElementCallback() {
+        setEnterSharedElementCallback(object : androidx.core.app.SharedElementCallback() {
+            override fun onMapSharedElements(names: MutableList<String>?, sharedElements: MutableMap<String, View>?) {
+                if (names != null && sharedElements != null) {
+                    val holder = pagerAdapter.getViewHolderAt(currentPosition)
+                    if (holder != null) {
+                        val currentView = if (holder.currentStatus?.isVideo == true) {
+                            holder.binding.layoutVideoPlayer
+                        } else {
+                            holder.binding.ivFullImage
+                        }
+                        sharedElements["transition_media"] = currentView
+                    }
+                }
+            }
+        })
+    }
+
+    private fun prepareFinishResult() {
+        val data = android.content.Intent().apply {
+            putExtra(EXTRA_CURRENT_POSITION, currentPosition)
+        }
+        setResult(RESULT_OK, data)
+    }
+
+    override fun finishAfterTransition() {
+        prepareFinishResult()
+        super.finishAfterTransition()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        prepareFinishResult()
+        @Suppress("DEPRECATION")
+        super.onBackPressed()
     }
 
     private fun setupViewPager() {
@@ -232,5 +267,6 @@ class MediaViewActivity : AppCompatActivity() {
         const val EXTRA_STATUS_MEDIA = "extra_status_media"
         const val EXTRA_MEDIA_LIST = "extra_media_list"
         const val EXTRA_INITIAL_POSITION = "extra_initial_position"
+        const val EXTRA_CURRENT_POSITION = "extra_current_position"
     }
 }

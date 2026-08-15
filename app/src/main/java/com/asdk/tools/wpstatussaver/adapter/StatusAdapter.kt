@@ -92,7 +92,7 @@ class StatusAdapter(
     }
 
     inner class StatusViewHolder(
-        private val binding: ItemStatusCardBinding
+        val binding: ItemStatusCardBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindSelectionOnly(status: StatusMedia) {

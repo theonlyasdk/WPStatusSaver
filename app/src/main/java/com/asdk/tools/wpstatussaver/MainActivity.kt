@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         private set
 
     private var isSelectionActive = false
+    private var reenterPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Apply persisted user theme (Auto/Light/Dark)
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         setupViewPager()
         setupHeaderActions()
         setupSelectionActions()
+        setupSharedElementCallback()
 
         // Handle system back button to exit multi-select if active
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -71,6 +73,44 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun setupSharedElementCallback() {
+        setExitSharedElementCallback(object : androidx.core.app.SharedElementCallback() {
+            override fun onMapSharedElements(names: MutableList<String>?, sharedElements: MutableMap<String, View>?) {
+                if (reenterPosition != -1 && names != null && sharedElements != null) {
+                    val fragment = getActiveFragment()
+                    val recyclerView = (fragment as? StatusListFragment)?.getRecyclerView()
+                        ?: (fragment as? SavedListFragment)?.getRecyclerView()
+                    val holder = recyclerView?.findViewHolderForAdapterPosition(reenterPosition) as? StatusAdapter.StatusViewHolder
+                    val thumbView = holder?.binding?.ivThumbnail
+                    if (thumbView != null) {
+                        sharedElements["transition_media"] = thumbView
+                    }
+                    reenterPosition = -1
+                }
+            }
+        })
+    }
+
+    override fun onActivityReenter(resultCode: Int, data: Intent?) {
+        super.onActivityReenter(resultCode, data)
+        val returnPos = data?.getIntExtra(MediaViewActivity.EXTRA_CURRENT_POSITION, -1) ?: -1
+        if (returnPos != -1) {
+            reenterPosition = returnPos
+            val fragment = getActiveFragment()
+            val recyclerView = (fragment as? StatusListFragment)?.getRecyclerView()
+                ?: (fragment as? SavedListFragment)?.getRecyclerView()
+            recyclerView?.scrollToPosition(returnPos)
+            supportPostponeEnterTransition()
+            recyclerView?.viewTreeObserver?.addOnPreDrawListener(object : android.view.ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    recyclerView.viewTreeObserver.removeOnPreDrawListener(this)
+                    supportStartPostponedEnterTransition()
+                    return true
+                }
+            })
+        }
     }
 
     override fun onResume() {
