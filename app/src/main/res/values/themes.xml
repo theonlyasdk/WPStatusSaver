@@ -6,6 +6,8 @@
         <item name="colorSecondary">@color/whatsapp_accent</item>
         <item name="colorSecondaryVariant">@color/whatsapp_primary</item>
         <item name="colorAccent">@color/whatsapp_accent</item>
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
         <item name="android:statusBarColor">@color/whatsapp_primary_dark</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="appBarBackground">@color/whatsapp_primary</item>
@@ -14,7 +16,8 @@
         <item name="appBarSourceButtonBackground">#26FFFFFF</item>
         <item name="appBarSourceButtonTextColor">@color/white</item>
         <item name="selectionBarBackground">@color/whatsapp_primary_dark</item>
-        <item name="colorControlNormal">@color/white</item>
+        <item name="bottomNavBackground">@color/surface_card</item>
+        <item name="colorControlNormal">@color/text_secondary</item>
         <item name="colorControlActivated">@color/whatsapp_accent</item>
         <item name="switchStyle">@style/Widget.App.SwitchCompat</item>
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.Small</item>

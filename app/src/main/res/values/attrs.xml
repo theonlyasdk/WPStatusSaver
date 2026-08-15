@@ -6,4 +6,5 @@
     <attr name="appBarSourceButtonBackground" format="color|reference" />
     <attr name="appBarSourceButtonTextColor" format="color|reference" />
     <attr name="selectionBarBackground" format="color|reference" />
+    <attr name="bottomNavBackground" format="color|reference" />
 </resources>

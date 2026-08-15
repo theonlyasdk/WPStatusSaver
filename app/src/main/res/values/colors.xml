@@ -3,8 +3,8 @@
     <!-- Brand colors (Default Material 1 Palette) -->
     <color name="whatsapp_primary">#075E54</color>
     <color name="whatsapp_primary_dark">#054C44</color>
-    <color name="whatsapp_accent">#25D366</color>
-    <color name="whatsapp_light_green">#25D366</color>
+    <color name="whatsapp_accent">#00A884</color>
+    <color name="whatsapp_light_green">#00A884</color>
     <color name="whatsapp_appbar">#075E54</color>
 
     <!-- Material 1 Palette -->
