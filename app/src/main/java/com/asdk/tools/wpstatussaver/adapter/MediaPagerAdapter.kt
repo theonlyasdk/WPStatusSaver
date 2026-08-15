@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.asdk.tools.wpstatussaver.R
 import com.asdk.tools.wpstatussaver.databinding.ItemMediaPagerBinding
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit
 
 class MediaPagerAdapter(
     private val items: List<StatusMedia>,
+    private val initialPosition: Int,
     private val onMediaReady: () -> Unit,
     private val onDismiss: () -> Unit,
     private val onToggleBars: () -> Unit,
@@ -38,7 +40,7 @@ class MediaPagerAdapter(
     }
 
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], position)
         activeHolders[position] = holder
     }
 
@@ -61,10 +63,13 @@ class MediaPagerAdapter(
 
     fun onPageSelected(position: Int) {
         for ((pos, holder) in activeHolders) {
+            val target = if (holder.currentStatus?.isVideo == true) holder.binding.layoutVideoPlayer else holder.binding.ivFullImage
             if (pos != position) {
                 holder.pauseVideo()
+                ViewCompat.setTransitionName(target, null)
             } else {
                 holder.onPageActivated()
+                ViewCompat.setTransitionName(target, "transition_media")
             }
         }
     }
@@ -75,7 +80,8 @@ class MediaPagerAdapter(
 
         private val handler = Handler(Looper.getMainLooper())
         private var isUserSeeking = false
-        private var currentStatus: StatusMedia? = null
+        var currentStatus: StatusMedia? = null
+            private set
 
         private val updateProgressRunnable = object : Runnable {
             override fun run() {
@@ -88,7 +94,7 @@ class MediaPagerAdapter(
             }
         }
 
-        fun bind(status: StatusMedia) {
+        fun bind(status: StatusMedia, position: Int) {
             currentStatus = status
 
             binding.swipeDismissLayout.backgroundView = binding.containerLayout
@@ -98,20 +104,31 @@ class MediaPagerAdapter(
             }
             binding.swipeDismissLayout.onDismiss = onDismiss
 
+            // Set transitionName ONLY on the item matching the requested transition position
+            val targetSharedView = if (status.isVideo) binding.layoutVideoPlayer else binding.ivFullImage
+            val otherView = if (status.isVideo) binding.ivFullImage else binding.layoutVideoPlayer
+            ViewCompat.setTransitionName(otherView, null)
+
+            if (position == initialPosition) {
+                ViewCompat.setTransitionName(targetSharedView, "transition_media")
+            } else {
+                ViewCompat.setTransitionName(targetSharedView, null)
+            }
+
             if (status.isVideo) {
                 binding.ivFullImage.visibility = View.GONE
                 binding.layoutVideoPlayer.visibility = View.VISIBLE
                 binding.previewProgressBar.visibility = View.VISIBLE
-                setupVideo(status.uri)
+                setupVideo(status.uri, position)
             } else {
                 binding.layoutVideoPlayer.visibility = View.GONE
                 binding.ivFullImage.visibility = View.VISIBLE
                 binding.previewProgressBar.visibility = View.VISIBLE
-                setupImage(status.uri)
+                setupImage(status.uri, position)
             }
         }
 
-        private fun setupImage(uri: Uri) {
+        private fun setupImage(uri: Uri, position: Int) {
             binding.ivFullImage.setOnScaleChangeListener { _, _, _ ->
                 val isZoomed = binding.ivFullImage.scale > 1.05f
                 onZoomChanged(isZoomed)
@@ -135,7 +152,9 @@ class MediaPagerAdapter(
                         isFirstResource: Boolean
                     ): Boolean {
                         binding.previewProgressBar.visibility = View.GONE
-                        onMediaReady()
+                        if (position == initialPosition) {
+                            onMediaReady()
+                        }
                         return false
                     }
 
@@ -147,26 +166,30 @@ class MediaPagerAdapter(
                         isFirstResource: Boolean
                     ): Boolean {
                         binding.previewProgressBar.visibility = View.GONE
-                        onMediaReady()
+                        if (position == initialPosition) {
+                            onMediaReady()
+                        }
                         return false
                     }
                 })
                 .into(binding.ivFullImage)
         }
 
-        private fun setupVideo(uri: Uri) {
+        private fun setupVideo(uri: Uri, position: Int) {
             binding.videoView.setVideoURI(uri)
 
             binding.videoView.setOnPreparedListener { mediaPlayer ->
                 binding.previewProgressBar.visibility = View.GONE
-                onMediaReady()
+                if (position == initialPosition) {
+                    onMediaReady()
+                }
                 mediaPlayer.isLooping = false
                 val duration = mediaPlayer.duration
                 binding.videoSeekBar.max = duration
                 binding.tvTotalDuration.text = formatDuration(duration.toLong())
                 binding.tvCurrentDuration.text = formatDuration(0)
 
-                if (bindingAdapterPosition == 0 && SettingsManager.isAutoPlayVideo(itemView.context)) {
+                if (position == initialPosition && SettingsManager.isAutoPlayVideo(itemView.context)) {
                     startVideo()
                 } else {
                     binding.btnPlayPause.setImageResource(R.drawable.ic_play_arrow)

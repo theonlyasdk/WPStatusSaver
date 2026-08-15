@@ -79,6 +79,7 @@ class MediaViewActivity : AppCompatActivity() {
     private fun setupViewPager() {
         pagerAdapter = MediaPagerAdapter(
             items = mediaList,
+            initialPosition = currentPosition,
             onMediaReady = {
                 supportStartPostponedEnterTransition()
             },
