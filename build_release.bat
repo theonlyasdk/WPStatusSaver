@@ -37,7 +37,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 set "APK_SRC=app\build\outputs\apk\release\app-release.apk"
 set "OUTPUT_DIR=build_output"
-set "DEST_APK=%OUTPUT_DIR%\WPStatusSaver-v1.0-release.apk"
+set "DEST_APK=%OUTPUT_DIR%\WPStatusSaver-v1.1-release.apk"
 
 if exist "%APK_SRC%" (
     if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
