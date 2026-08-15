@@ -99,7 +99,7 @@ class MediaViewActivity : AppCompatActivity() {
         binding.viewPager.apply {
             adapter = pagerAdapter
             offscreenPageLimit = 1
-            setPageTransformer(WhatsAppPageTransformer((32 * resources.displayMetrics.density).toInt()))
+            setPageTransformer(androidx.viewpager2.widget.MarginPageTransformer((24 * resources.displayMetrics.density).toInt()))
             setCurrentItem(currentPosition, false)
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
