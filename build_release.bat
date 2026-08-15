@@ -48,8 +48,22 @@ if exist "%APK_SRC%" (
     echo   BUILD SUCCESSFUL!
     echo   Output APK: %CD%\%DEST_APK%
     echo ===================================================
-    echo.
-    explorer /select,"%CD%\%DEST_APK%"
+
+    :: Check if ADB is available and an active device is connected
+    where adb >nul 2>nul
+    if !ERRORLEVEL! EQU 0 (
+        for /f "skip=1 tokens=1,2" %%A in ('adb devices') do (
+            if "%%B"=="device" (
+                echo.
+                echo [ADB] Connected device found: %%A
+                echo [ADB] Auto-installing with all permissions granted (-r -g)...
+                adb -s %%A install -r -g "%DEST_APK%"
+                if !ERRORLEVEL! EQU 0 (
+                    echo [ADB] Successfully installed on %%A!
+                )
+            )
+        )
+    )
 ) else (
     echo.
     echo [WARNING] Could not locate APK at %APK_SRC%
