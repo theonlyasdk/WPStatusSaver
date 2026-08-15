@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/whatsapp_accent</item>
         <item name="colorSurface">@color/surface_card</item>
         <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSecondaryContainer">#E8F5E9</item>
+        <item name="colorOnSecondaryContainer">@color/whatsapp_primary</item>
+        <item name="colorError">@color/delete_red</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="android:statusBarColor">@color/whatsapp_primary_dark</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="appBarBackground">@color/whatsapp_primary</item>
