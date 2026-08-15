@@ -103,9 +103,7 @@ class StatusAdapter(
             binding.layoutVideoBadge.visibility = if (status.isVideo && showBadge && !isSelectionMode) View.VISIBLE else View.GONE
 
             if (isSelectionMode) {
-                binding.btnSave.visibility = View.GONE
-                binding.btnShare.visibility = View.GONE
-                binding.btnDelete.visibility = View.GONE
+                binding.layoutCardActions.visibility = View.GONE
 
                 binding.viewSelectedOverlay.visibility = if (isSelected) View.VISIBLE else View.GONE
                 binding.ivCheckSelected.visibility = View.VISIBLE
@@ -119,6 +117,7 @@ class StatusAdapter(
                     binding.ivCheckSelected.setColorFilter(ContextCompat.getColor(context, R.color.white))
                 }
             } else {
+                binding.layoutCardActions.visibility = View.VISIBLE
                 binding.viewSelectedOverlay.visibility = View.GONE
                 binding.ivCheckSelected.visibility = View.GONE
 

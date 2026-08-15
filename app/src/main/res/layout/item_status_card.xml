@@ -17,6 +17,7 @@
         android:contentDescription="@string/tab_images"
         android:scaleType="centerCrop"
         android:transitionName="transition_media"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,55 +49,59 @@
         app:tint="@color/white"
         tools:visibility="visible" />
 
-    <!-- Save Button / Saved Indicator -->
-    <ImageButton
-        android:id="@+id/btnSave"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+    <!-- Bottom Right Action Buttons Row -->
+    <LinearLayout
+        android:id="@+id/layoutCardActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
-        android:background="@drawable/bg_circle_button"
-        android:contentDescription="@string/action_save"
-        android:padding="6dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_file_download"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@+id/ivThumbnail"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
+        app:layout_constraintEnd_toEndOf="@+id/ivThumbnail">
 
-    <!-- Share Button -->
-    <ImageButton
-        android:id="@+id/btnShare"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/bg_circle_button"
-        android:contentDescription="@string/action_share"
-        android:padding="6dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_share"
-        app:layout_constraintBottom_toBottomOf="@+id/btnSave"
-        app:layout_constraintEnd_toStartOf="@+id/btnSave"
-        app:layout_constraintTop_toTopOf="@+id/btnSave"
-        app:tint="@color/white" />
+        <!-- Delete Button (Shown in Saved Tab) -->
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_circle_button"
+            android:contentDescription="@string/action_delete"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_delete"
+            android:visibility="gone"
+            app:tint="@color/white"
+            tools:visibility="visible" />
 
-    <!-- Delete Button (Shown in Saved Tab) -->
-    <ImageButton
-        android:id="@+id/btnDelete"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/bg_circle_button"
-        android:contentDescription="@string/action_delete"
-        android:padding="6dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_delete"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/btnSave"
-        app:layout_constraintEnd_toStartOf="@+id/btnShare"
-        app:layout_constraintTop_toTopOf="@+id/btnSave"
-        app:tint="@color/white"
-        tools:visibility="visible" />
+        <!-- Share Button -->
+        <ImageButton
+            android:id="@+id/btnShare"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_circle_button"
+            android:contentDescription="@string/action_share"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_share"
+            app:tint="@color/white" />
+
+        <!-- Save Button / Saved Indicator (Shown in Status Tabs) -->
+        <ImageButton
+            android:id="@+id/btnSave"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_button"
+            android:contentDescription="@string/action_save"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_file_download"
+            app:tint="@color/white" />
+
+    </LinearLayout>
 
     <!-- Multi-Selection Dimming Overlay -->
     <View
