@@ -176,12 +176,15 @@ class MediaViewActivity : AppCompatActivity() {
             supportFinishAfterTransition()
         }
 
+        binding.btnTopInfo.setOnClickListener {
+            showMediaDetailsDialog()
+        }
+
         val shareAction = View.OnClickListener {
             if (currentPosition in mediaList.indices) {
                 WhatsAppLauncher.shareStatus(this, lifecycleScope, mediaList[currentPosition])
             }
         }
-        binding.btnTopShare.setOnClickListener(shareAction)
         binding.btnShareMedia.setOnClickListener(shareAction)
 
         binding.btnRepostMedia.setOnClickListener {
@@ -197,6 +200,43 @@ class MediaViewActivity : AppCompatActivity() {
         binding.btnDeleteMedia.setOnClickListener {
             showDeleteConfirmDialog()
         }
+    }
+
+    private fun showMediaDetailsDialog() {
+        if (currentPosition !in mediaList.indices) return
+        val status = mediaList[currentPosition]
+
+        val dialogBinding = com.asdk.tools.wpstatussaver.databinding.DialogMediaDetailsBinding.inflate(layoutInflater)
+
+        dialogBinding.ivDetailTypeIcon.setImageResource(if (status.isVideo) R.drawable.ic_video else R.drawable.ic_photo)
+        dialogBinding.tvDetailFileName.text = status.title
+
+        val dateFormat = java.text.SimpleDateFormat("MMM dd, yyyy  •  hh:mm a", java.util.Locale.getDefault())
+        dialogBinding.tvDetailDate.text = if (status.dateModified > 0) {
+            dateFormat.format(java.util.Date(status.dateModified))
+        } else {
+            "Unknown"
+        }
+
+        val typeStr = if (status.isVideo) "MP4 Video" else "JPEG Image"
+        val sizeStr = formatFileSize(status.size)
+        dialogBinding.tvDetailSize.text = "$sizeStr  •  $typeStr"
+
+        val pathStr = if (status.path.isNotEmpty()) status.path else status.uriString
+        dialogBinding.tvDetailPath.text = pathStr
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Details")
+            .setView(dialogBinding.root)
+            .setPositiveButton("Close", null)
+            .show()
+    }
+
+    private fun formatFileSize(bytes: Long): String {
+        if (bytes <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB")
+        val digitGroups = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt().coerceIn(0, units.size - 1)
+        return String.format(java.util.Locale.getDefault(), "%.1f %s", bytes / Math.pow(1024.0, digitGroups.toDouble()), units[digitGroups])
     }
 
     private fun toggleTopBottomBars() {
