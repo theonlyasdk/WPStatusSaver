@@ -92,7 +92,7 @@ class SwipeDismissFrameLayout @JvmOverloads constructor(
                     return true
                 }
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP -> {
                 if (isDragging) {
                     velocityTracker?.computeCurrentVelocity(1000)
                     val yVelocity = velocityTracker?.yVelocity ?: 0f
@@ -104,6 +104,15 @@ class SwipeDismissFrameLayout @JvmOverloads constructor(
                     } else {
                         animateRestore()
                     }
+                    isDragging = false
+                    velocityTracker?.recycle()
+                    velocityTracker = null
+                    return true
+                }
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                if (isDragging) {
+                    animateRestore()
                     isDragging = false
                     velocityTracker?.recycle()
                     velocityTracker = null

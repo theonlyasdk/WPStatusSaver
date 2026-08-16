@@ -14,6 +14,9 @@
         <item name="bottomNavBackground">?attr/colorSurface</item>
         <item name="colorControlNormal">?attr/colorOnSurface</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="popupMenuStyle">@style/Widget.App.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.App.PopupMenu</item>
+        <item name="popupMenuBackground">@drawable/bg_popup_menu_m3</item>
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.Small</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.Medium</item>
     </style>
@@ -25,10 +28,18 @@
         <item name="actionMenuTextColor">?attr/colorOnSurface</item>
     </style>
 
-    <!-- Popup Menu Theme Overlay for M3 (Light Mode) -->
+    <!-- Popup Menu Theme Overlay for M3 (Monet Dynamic Colors) -->
     <style name="ThemeOverlay.App.PopupMenu" parent="ThemeOverlay.Material3.Light">
+        <item name="android:colorBackground">?attr/colorSurfaceContainer</item>
+        <item name="colorSurface">?attr/colorSurfaceContainer</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+        <item name="popupMenuStyle">@style/Widget.App.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.App.PopupMenu</item>
+    </style>
+
+    <style name="Widget.App.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_popup_menu_m3</item>
     </style>
 
     <!-- Translucent Media Viewer Theme with Live Background for Gestures -->

@@ -84,6 +84,27 @@ class MediaViewActivity : AppCompatActivity() {
         setupActions()
         setupSharedElementCallback()
         supportPostponeEnterTransition()
+
+        val transition = window.sharedElementEnterTransition
+        if (transition != null) {
+            transition.addListener(object : android.transition.Transition.TransitionListener {
+                override fun onTransitionStart(transition: android.transition.Transition?) {}
+                override fun onTransitionEnd(transition: android.transition.Transition?) {
+                    transition?.removeListener(this)
+                    pagerAdapter.getViewHolderAt(currentPosition)?.onEnterTransitionComplete()
+                }
+                override fun onTransitionCancel(transition: android.transition.Transition?) {
+                    pagerAdapter.getViewHolderAt(currentPosition)?.onEnterTransitionComplete()
+                }
+                override fun onTransitionPause(transition: android.transition.Transition?) {}
+                override fun onTransitionResume(transition: android.transition.Transition?) {}
+            })
+        } else {
+            // Fallback for devices without shared element transitions
+            window.decorView.post {
+                pagerAdapter.getViewHolderAt(currentPosition)?.onEnterTransitionComplete()
+            }
+        }
     }
 
     private fun setupSharedElementCallback() {
@@ -93,7 +114,7 @@ class MediaViewActivity : AppCompatActivity() {
                     val holder = pagerAdapter.getViewHolderAt(currentPosition)
                     if (holder != null) {
                         val currentView = if (holder.currentStatus?.isVideo == true) {
-                            holder.binding.ivVideoThumbnail.apply { visibility = View.VISIBLE }
+                            holder.binding.ivVideoThumbnail
                         } else {
                             holder.binding.ivFullImage
                         }
@@ -112,14 +133,22 @@ class MediaViewActivity : AppCompatActivity() {
         setResult(RESULT_OK, data)
     }
 
-    override fun finishAfterTransition() {
+    private fun prepareForExit() {
         prepareFinishResult()
+        val holder = pagerAdapter.getViewHolderAt(currentPosition)
+        if (holder != null && holder.currentStatus?.isVideo == true) {
+            holder.prepareForExit()
+        }
+    }
+
+    override fun finishAfterTransition() {
+        prepareForExit()
         super.finishAfterTransition()
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        prepareFinishResult()
+        prepareForExit()
         @Suppress("DEPRECATION")
         super.onBackPressed()
     }
@@ -157,6 +186,10 @@ class MediaViewActivity : AppCompatActivity() {
                     updateCurrentItemUI()
                 }
             })
+        }
+
+        binding.viewPager.post {
+            supportStartPostponedEnterTransition()
         }
 
         updateCurrentItemUI()
@@ -260,9 +293,23 @@ class MediaViewActivity : AppCompatActivity() {
 
     private fun toggleTopBottomBars() {
         val isVisible = binding.appBarLayout.visibility == View.VISIBLE
-        val newVisibility = if (isVisible) View.GONE else View.VISIBLE
-        binding.appBarLayout.visibility = newVisibility
-        binding.bottomBar.visibility = newVisibility
+        if (isVisible) {
+            binding.appBarLayout.animate().alpha(0f).translationY(-binding.appBarLayout.height.toFloat()).setDuration(200).withEndAction {
+                binding.appBarLayout.visibility = View.GONE
+            }.start()
+            binding.bottomBar.animate().alpha(0f).translationY(binding.bottomBar.height.toFloat()).setDuration(200).withEndAction {
+                binding.bottomBar.visibility = View.GONE
+            }.start()
+        } else {
+            binding.appBarLayout.apply {
+                visibility = View.VISIBLE
+                alpha = 0f
+            }.animate().alpha(1f).translationY(0f).setDuration(200).start()
+            binding.bottomBar.apply {
+                visibility = View.VISIBLE
+                alpha = 0f
+            }.animate().alpha(1f).translationY(0f).setDuration(200).start()
+        }
     }
 
     private fun saveCurrentMedia() {

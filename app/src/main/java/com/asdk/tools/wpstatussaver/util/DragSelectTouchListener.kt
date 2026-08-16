@@ -2,14 +2,16 @@ package com.asdk.tools.wpstatussaver.util
 
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.asdk.tools.wpstatussaver.adapter.StatusAdapter
 import com.asdk.tools.wpstatussaver.model.StatusMedia
 
 class DragSelectTouchListener(
     private val recyclerView: RecyclerView,
+    private val swipeRefreshLayout: SwipeRefreshLayout? = null,
     private val adapterProvider: () -> StatusAdapter?,
+    private val onDragStateChange: ((Boolean) -> Unit)? = null,
     private val onSelectionChange: ((Int) -> Unit)? = null
 ) : RecyclerView.OnItemTouchListener {
 
@@ -42,12 +44,15 @@ class DragSelectTouchListener(
         val adapter = adapterProvider() ?: return
 
         isDragSelecting = true
+        recyclerView.parent?.requestDisallowInterceptTouchEvent(true)
+        swipeRefreshLayout?.isEnabled = false
+        onDragStateChange?.invoke(true)
+
         anchorPosition = position
         lastTouchedPosition = position
         initialSelectedItems.clear()
         initialSelectedItems.addAll(adapter.selectedItems)
 
-        // If the item at anchor was already selected, we keep selecting; if not, we select it
         val item = adapter.currentList.getOrNull(position)
         isSelectingState = true
 
@@ -59,18 +64,20 @@ class DragSelectTouchListener(
             onSelectionChange?.invoke(adapter.selectedItems.size)
         }
 
-        try {
-            recyclerView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-        } catch (e: Exception) {
-            // Ignore if haptics unavailable
-        }
+        HapticHelper.longPress(recyclerView)
     }
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
         if (!isDragSelecting) return false
         when (e.actionMasked) {
-            MotionEvent.ACTION_DOWN -> return true
+            MotionEvent.ACTION_DOWN -> {
+                rv.parent?.requestDisallowInterceptTouchEvent(true)
+                swipeRefreshLayout?.isEnabled = false
+                return true
+            }
             MotionEvent.ACTION_MOVE -> {
+                rv.parent?.requestDisallowInterceptTouchEvent(true)
+                swipeRefreshLayout?.isEnabled = false
                 handleMove(e)
                 return true
             }
@@ -85,7 +92,11 @@ class DragSelectTouchListener(
     override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
         if (!isDragSelecting) return
         when (e.actionMasked) {
-            MotionEvent.ACTION_MOVE -> handleMove(e)
+            MotionEvent.ACTION_MOVE -> {
+                rv.parent?.requestDisallowInterceptTouchEvent(true)
+                swipeRefreshLayout?.isEnabled = false
+                handleMove(e)
+            }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> finishDrag()
         }
     }
@@ -95,7 +106,7 @@ class DragSelectTouchListener(
         lastMotionY = e.y
         processPositionUnderTouch(e.x, e.y)
 
-        // iOS-style auto-scroll near edges
+        // iOS-style auto-scroll near top/bottom edges
         val height = recyclerView.height
         val edgeThreshold = (height * 0.16f).toInt().coerceAtLeast(60)
         val y = e.y.toInt()
@@ -126,11 +137,7 @@ class DragSelectTouchListener(
         if (position != RecyclerView.NO_POSITION && position != lastTouchedPosition) {
             lastTouchedPosition = position
             updateSelectionForRange(anchorPosition, position)
-            try {
-                recyclerView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-            } catch (e: Exception) {
-                // Ignore
-            }
+            HapticHelper.dragSelectTick(recyclerView)
         }
     }
 
@@ -177,6 +184,9 @@ class DragSelectTouchListener(
         autoScrollDistance = 0
         recyclerView.removeCallbacks(autoScrollRunnable)
         initialSelectedItems.clear()
+        recyclerView.parent?.requestDisallowInterceptTouchEvent(false)
+        swipeRefreshLayout?.isEnabled = true
+        onDragStateChange?.invoke(false)
     }
 
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}

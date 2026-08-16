@@ -177,8 +177,23 @@ class MediaPagerAdapter(
                 .into(binding.ivFullImage)
         }
 
+        private var isTransitionComplete = false
+
         private fun setupVideo(uri: Uri, position: Int) {
             isVideoPrepared = false
+            
+            // Systematically fix hero animation glitch: VideoView (SurfaceView) punches holes through the window during transitions.
+            // We MUST keep it GONE during the shared element transition and rely on the ImageView poster image.
+            if (position == initialPosition && !isTransitionComplete) {
+                binding.videoView.visibility = View.GONE
+                binding.layoutVideoControls.visibility = View.GONE
+                binding.layoutVideoControls.alpha = 0f
+            } else {
+                binding.videoView.visibility = View.VISIBLE
+                binding.layoutVideoControls.visibility = View.VISIBLE
+                binding.layoutVideoControls.alpha = 1f
+            }
+            
             binding.ivVideoThumbnail.visibility = View.VISIBLE
             binding.previewProgressBar.visibility = View.VISIBLE
 
@@ -220,13 +235,15 @@ class MediaPagerAdapter(
             binding.videoView.setOnPreparedListener { mediaPlayer ->
                 isVideoPrepared = true
                 binding.previewProgressBar.visibility = View.GONE
+                binding.videoView.visibility = View.VISIBLE
+                binding.layoutVideoControls.visibility = View.VISIBLE
                 mediaPlayer.isLooping = false
                 val duration = mediaPlayer.duration
                 binding.videoSeekBar.max = duration
                 binding.tvTotalDuration.text = formatDuration(duration.toLong())
                 binding.tvCurrentDuration.text = formatDuration(0)
 
-                if (position == initialPosition && SettingsManager.isAutoPlayVideo(itemView.context)) {
+                if (SettingsManager.isAutoPlayVideo(itemView.context)) {
                     startVideo()
                 } else {
                     binding.btnPlayPause.setImageResource(R.drawable.ic_play_arrow)
@@ -260,16 +277,25 @@ class MediaPagerAdapter(
             }
 
             binding.videoSeekBar.setOnTouchListener { v, event ->
-                if (event.action == android.view.MotionEvent.ACTION_DOWN) {
-                    val seekBar = v as SeekBar
-                    val paddingLeft = seekBar.paddingLeft
-                    val paddingRight = seekBar.paddingRight
-                    val width = seekBar.width - paddingLeft - paddingRight
-                    if (width > 0 && seekBar.max > 0) {
-                        val progress = (((event.x - paddingLeft) / width) * seekBar.max).toInt().coerceIn(0, seekBar.max)
-                        seekBar.progress = progress
-                        binding.videoView.seekTo(progress)
-                        binding.tvCurrentDuration.text = formatDuration(progress.toLong())
+                when (event.action) {
+                    android.view.MotionEvent.ACTION_DOWN -> {
+                        v.parent?.requestDisallowInterceptTouchEvent(true)
+                        val seekBar = v as SeekBar
+                        val paddingLeft = seekBar.paddingLeft
+                        val paddingRight = seekBar.paddingRight
+                        val width = seekBar.width - paddingLeft - paddingRight
+                        if (width > 0 && seekBar.max > 0) {
+                            val progress = (((event.x - paddingLeft) / width) * seekBar.max).toInt().coerceIn(0, seekBar.max)
+                            seekBar.progress = progress
+                            binding.videoView.seekTo(progress)
+                            binding.tvCurrentDuration.text = formatDuration(progress.toLong())
+                        }
+                    }
+                    android.view.MotionEvent.ACTION_MOVE -> {
+                        v.parent?.requestDisallowInterceptTouchEvent(true)
+                    }
+                    android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
+                        v.parent?.requestDisallowInterceptTouchEvent(false)
                     }
                 }
                 false
@@ -285,17 +311,40 @@ class MediaPagerAdapter(
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
                     isUserSeeking = true
+                    seekBar?.parent?.requestDisallowInterceptTouchEvent(true)
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                     isUserSeeking = false
+                    seekBar?.parent?.requestDisallowInterceptTouchEvent(false)
                 }
             })
         }
 
+        fun onEnterTransitionComplete() {
+            if (isTransitionComplete) return
+            isTransitionComplete = true
+            if (currentStatus?.isVideo == true) {
+                binding.videoView.visibility = View.VISIBLE
+                binding.layoutVideoControls.alpha = 0f
+                binding.layoutVideoControls.visibility = View.VISIBLE
+                binding.layoutVideoControls.animate().alpha(1f).setDuration(200).start()
+                if (isVideoPrepared && SettingsManager.isAutoPlayVideo(itemView.context)) {
+                    startVideo()
+                } else if (!isVideoPrepared) {
+                    binding.previewProgressBar.visibility = View.VISIBLE
+                }
+            }
+        }
+
         fun onPageActivated() {
-            if (currentStatus?.isVideo == true && SettingsManager.isAutoPlayVideo(itemView.context)) {
-                startVideo()
+            isTransitionComplete = true
+            if (currentStatus?.isVideo == true) {
+                binding.videoView.visibility = View.VISIBLE
+                binding.layoutVideoControls.visibility = View.VISIBLE
+                if (SettingsManager.isAutoPlayVideo(itemView.context)) {
+                    startVideo()
+                }
             }
         }
 
@@ -311,6 +360,8 @@ class MediaPagerAdapter(
         }
 
         fun startVideo() {
+            binding.videoView.visibility = View.VISIBLE
+            binding.layoutVideoControls.visibility = View.VISIBLE
             if (!isVideoPrepared) {
                 currentStatus?.uri?.let { binding.videoView.setVideoURI(it) }
             }
@@ -348,6 +399,18 @@ class MediaPagerAdapter(
                     binding.ivCenterPlayIndicator.visibility = View.GONE
                 }
                 .start()
+        }
+
+        fun prepareForExit() {
+            handler.removeCallbacks(updateProgressRunnable)
+            if (binding.videoView.isPlaying) {
+                binding.videoView.pause()
+            }
+            binding.videoView.visibility = View.GONE
+            binding.ivVideoThumbnail.visibility = View.VISIBLE
+            binding.layoutVideoControls.visibility = View.GONE
+            binding.ivCenterPlayIndicator.visibility = View.GONE
+            binding.previewProgressBar.visibility = View.GONE
         }
 
         fun recycle() {

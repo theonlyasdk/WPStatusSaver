@@ -177,7 +177,8 @@ class StatusAdapter(
             // Click listeners
             binding.root.setOnClickListener {
                 if (isSelectionMode) {
-                    com.asdk.tools.wpstatussaver.util.HapticHelper.selection(binding.root)
+                    val willBeSelected = !selectedItems.contains(status)
+                    com.asdk.tools.wpstatussaver.util.HapticHelper.selection(binding.root, willBeSelected)
                     toggleSelection(status, bindingAdapterPosition)
                 } else {
                     ViewCompat.setTransitionName(binding.ivThumbnail, "transition_media")
@@ -192,6 +193,8 @@ class StatusAdapter(
                     enterSelectionMode(status)
                     onItemLongClick?.invoke(status, bindingAdapterPosition)
                 } else {
+                    val willBeSelected = !selectedItems.contains(status)
+                    com.asdk.tools.wpstatussaver.util.HapticHelper.selection(binding.root, willBeSelected)
                     toggleSelection(status, bindingAdapterPosition)
                 }
                 true

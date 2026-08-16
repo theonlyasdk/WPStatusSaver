@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         // Handle system back button to exit multi-select if active
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (isSelectionActive) {
+                if (isSelectionActive || hasAnyActiveSelection()) {
                     exitActiveSelectionMode()
                 } else {
                     isEnabled = false
@@ -84,6 +84,31 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    fun hasAnyActiveSelection(): Boolean {
+        for (fragment in supportFragmentManager.fragments) {
+            val count = when (fragment) {
+                is StatusListFragment -> fragment.getAdapter().getSelectedCount()
+                is SavedListFragment -> fragment.getAdapter().getSelectedCount()
+                else -> 0
+            }
+            if (count > 0) return true
+        }
+        return false
+    }
+
+    fun syncGridSpanCount(newSpan: Int) {
+        for (fragment in supportFragmentManager.fragments) {
+            when (fragment) {
+                is StatusListFragment -> fragment.updateGridSpan(newSpan)
+                is SavedListFragment -> fragment.updateGridSpan(newSpan)
+            }
+        }
+    }
+
+    fun setViewPagerUserInputEnabled(enabled: Boolean) {
+        binding.viewPager.isUserInputEnabled = enabled
     }
 
     private fun getActiveFragment(): androidx.fragment.app.Fragment? {
@@ -100,14 +125,60 @@ class MainActivity : AppCompatActivity() {
                         is SavedListFragment -> currentFrag.getRecyclerView()
                         else -> null
                     }
+                    if (recyclerView != null) {
+                        for (i in 0 until recyclerView.childCount) {
+                            val vh = recyclerView.getChildViewHolder(recyclerView.getChildAt(i)) as? StatusAdapter.StatusViewHolder
+                            if (vh != null) {
+                                ViewCompat.setTransitionName(vh.binding.ivThumbnail, null)
+                            }
+                        }
+                    }
                     val holder = recyclerView?.findViewHolderForAdapterPosition(reenterPosition) as? StatusAdapter.StatusViewHolder
                     val thumbView = holder?.binding?.ivThumbnail
                     if (thumbView != null) {
                         ViewCompat.setTransitionName(thumbView, "transition_media")
                         sharedElements["transition_media"] = thumbView
-                        holder.fadeInCardControls()
+                        thumbView.alpha = 0f
                     }
                     reenterPosition = -1
+                }
+            }
+
+            override fun onSharedElementStart(
+                sharedElementNames: MutableList<String>?,
+                sharedElements: MutableList<View>?,
+                sharedElementSnapshots: MutableList<View>?
+            ) {
+                super.onSharedElementStart(sharedElementNames, sharedElements, sharedElementSnapshots)
+                if (sharedElements != null) {
+                    for (view in sharedElements) {
+                        view.alpha = 0f
+                    }
+                }
+            }
+
+            override fun onSharedElementEnd(
+                sharedElementNames: MutableList<String>?,
+                sharedElements: MutableList<View>?,
+                sharedElementSnapshots: MutableList<View>?
+            ) {
+                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots)
+                if (sharedElements != null) {
+                    for (view in sharedElements) {
+                        view.alpha = 1f
+                    }
+                }
+                val currentFrag = getActiveFragment()
+                val recyclerView = when (currentFrag) {
+                    is StatusListFragment -> currentFrag.getRecyclerView()
+                    is SavedListFragment -> currentFrag.getRecyclerView()
+                    else -> null
+                }
+                if (recyclerView != null) {
+                    for (i in 0 until recyclerView.childCount) {
+                        val holder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i)) as? StatusAdapter.StatusViewHolder
+                        holder?.fadeInCardControls()
+                    }
                 }
             }
         })
@@ -180,6 +251,17 @@ class MainActivity : AppCompatActivity() {
                     binding.bottomNavigation.selectedItemId = targetItemId
                 }
 
+                // Reset selection on inactive tabs to prevent stale background selections
+                val activeFrag = getActiveFragment()
+                for (fragment in supportFragmentManager.fragments) {
+                    if (fragment != activeFrag) {
+                        when (fragment) {
+                            is StatusListFragment -> fragment.getAdapter().exitSelectionMode()
+                            is SavedListFragment -> fragment.getAdapter().exitSelectionMode()
+                        }
+                    }
+                }
+
                 binding.viewPager.post {
                     val adapter = getActiveAdapter()
                     val count = adapter?.getSelectedCount() ?: 0
@@ -219,7 +301,7 @@ class MainActivity : AppCompatActivity() {
         // WhatsApp / WA Business switcher button
         binding.btnAppSource.setOnClickListener { view ->
             val installed = WhatsAppLauncher.getInstalledWhatsAppApps(this)
-            val popup = PopupMenu(this, view)
+            val popup = PopupMenu(androidx.appcompat.view.ContextThemeWrapper(this, R.style.ThemeOverlay_App_PopupMenu), view)
             for (app in installed) {
                 popup.menu.add(0, if (app == AppType.WHATSAPP) 1 else 2, 0, app.title)
             }
@@ -254,17 +336,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSelectionActions() {
         binding.btnCloseSelection.setOnClickListener {
-            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
+            com.asdk.tools.wpstatussaver.util.HapticHelper.selection(it, false)
             exitActiveSelectionMode()
         }
 
         binding.btnSelectAll.setOnClickListener {
-            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
+            com.asdk.tools.wpstatussaver.util.HapticHelper.batchSelection(it)
             selectAllInActiveFragment()
         }
 
         binding.tvSelectedCount.setOnClickListener {
-            com.asdk.tools.wpstatussaver.util.HapticHelper.click(it)
+            com.asdk.tools.wpstatussaver.util.HapticHelper.batchSelection(it)
             selectAllInActiveFragment()
         }
 
@@ -382,6 +464,7 @@ class MainActivity : AppCompatActivity() {
     private var progressDialog: androidx.appcompat.app.AlertDialog? = null
 
     private fun showLoadingDialog(message: String) {
+        if (isFinishing || isDestroyed) return
         dismissLoadingDialog()
         val view = layoutInflater.inflate(R.layout.dialog_loading, null)
         view.findViewById<android.widget.TextView>(R.id.tvLoadingMessage).text = message
@@ -392,8 +475,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dismissLoadingDialog() {
-        progressDialog?.dismiss()
+        try {
+            if (progressDialog?.isShowing == true) {
+                progressDialog?.dismiss()
+            }
+        } catch (e: Exception) {
+            // Ignore if window token unattached
+        }
         progressDialog = null
+    }
+
+    override fun onDestroy() {
+        dismissLoadingDialog()
+        super.onDestroy()
     }
 
     private fun batchSaveSelected() {

@@ -132,16 +132,24 @@ class StatusListFragment : Fragment() {
         )
 
         val dragSelectListener = com.asdk.tools.wpstatussaver.util.DragSelectTouchListener(
-            binding.recyclerView,
-            { statusAdapter },
-            { count -> (activity as? MainActivity)?.updateSelectionBar(count, isSavedTab = false) }
+            recyclerView = binding.recyclerView,
+            swipeRefreshLayout = binding.swipeRefreshLayout,
+            adapterProvider = { statusAdapter },
+            onDragStateChange = { isDragging ->
+                (activity as? MainActivity)?.setViewPagerUserInputEnabled(!isDragging)
+            },
+            onSelectionChange = { count ->
+                (activity as? MainActivity)?.updateSelectionBar(count, isSavedTab = false)
+            }
         )
         binding.recyclerView.addOnItemTouchListener(dragSelectListener)
 
         val pinchZoomListener = com.asdk.tools.wpstatussaver.util.GridPinchZoomGestureListener(
             binding.recyclerView,
             binding.swipeRefreshLayout
-        ) { _ -> }
+        ) { newSpan ->
+            (activity as? MainActivity)?.syncGridSpanCount(newSpan)
+        }
         binding.recyclerView.addOnItemTouchListener(pinchZoomListener)
 
         statusAdapter.onItemLongClick = { _, position ->
@@ -153,6 +161,13 @@ class StatusListFragment : Fragment() {
             adapter = statusAdapter
             setHasFixedSize(true)
             (itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
+        }
+    }
+
+    fun updateGridSpan(newSpan: Int) {
+        val lm = binding.recyclerView.layoutManager as? GridLayoutManager
+        if (lm != null && lm.spanCount != newSpan) {
+            lm.spanCount = newSpan
         }
     }
 
@@ -224,6 +239,7 @@ class StatusListFragment : Fragment() {
 
         if (showLoading && currentStatuses.isEmpty()) {
             binding.progressBar.visibility = View.VISIBLE
+            binding.layoutEmpty.visibility = View.GONE
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
