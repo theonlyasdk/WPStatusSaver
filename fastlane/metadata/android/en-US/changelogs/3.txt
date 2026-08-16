@@ -1,0 +1,1 @@
+Version 1.2: Added Android 14+ stateful haptic feedback, iOS-style isolated drag multi-select, synchronized grid pinch-zoom, and deep media persistence across reinstalls.

@@ -1,0 +1,15 @@
+<b>WP Status Saver</b> is a lightweight, modern, and privacy-first Android application designed to seamlessly view, save, and share WhatsApp and WhatsApp Business status updates.
+
+Built with pure Material 3 and dynamic Material You theming, it offers an intuitive gallery experience without ads, trackers, or telemetry.
+
+<h3>🌟 Key Features:</h3>
+• <b>WhatsApp & WA Business Support</b>: Instantly switch between standard WhatsApp, WA Business, Dual/Cloned apps, and Multi-user work profiles.
+• <b>Modern Gallery Experience</b>: High-performance image and video viewer with smooth hero transitions, pinch-to-zoom columns, and swipe-down-to-dismiss.
+• <b>iOS-Style Batch Selection</b>: Drag-to-select multiple statuses effortlessly with stateful Android 14+ haptic feedback.
+• <b>Granular Media Sorting & Filters</b>: Sort statuses by newest/oldest and filter by unsaved or already-saved items.
+• <b>Deep Storage Persistence</b>: Robust media scanning across Android 5.0 up to Android 16, ensuring your saved statuses remain accessible even after app reinstalls.
+• <b>Built-in Video Player</b>: Instant video playback with full scrub controls, audio toggle, and zero lag.
+• <b>100% Free & Open Source</b>: No advertisements, no analytics, no third-party tracking, and zero unnecessary permissions.
+
+<h3>🔒 Privacy & Permissions:</h3>
+WP Status Saver operates entirely on your local device. It requires read access to WhatsApp status media directories via standard Android Storage Access Framework (SAF) or media permissions solely to display and save statuses you have viewed.

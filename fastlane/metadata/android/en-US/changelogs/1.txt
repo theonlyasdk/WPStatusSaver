@@ -1,0 +1,1 @@
+Initial release of WP Status Saver with core status viewing and saving capabilities.
